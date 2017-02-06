@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+	xmlns:tns="http://eparking.pl/errorhandlerservice" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="ErrorHandlerService"
+	targetNamespace="http://eparking.pl/errorhandlerservice">
+	<wsdl:types>
+		<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+			<xsd:import namespace="http://eparking.pl/errorhandlerservice"
+				schemaLocation="ErrorHandlerService.xsd" />
+		</xsd:schema>
+	</wsdl:types>
+	<wsdl:message name="handleErrorRequest">
+		<wsdl:part element="tns:handleError" name="parameters" />
+	</wsdl:message>
+	<wsdl:message name="handleErrorResponse">
+		<wsdl:part element="tns:handleErrorResponse" name="parameters" />
+	</wsdl:message>
+	<wsdl:portType name="ErrorHandlerService">
+		<wsdl:operation name="handleError">
+			<wsdl:input message="tns:handleErrorRequest" />
+			<wsdl:output message="tns:handleErrorResponse" />
+		</wsdl:operation>
+	</wsdl:portType>
+	<wsdl:binding name="ErrorHandlerServiceSOAP" type="tns:ErrorHandlerService">
+		<soap:binding style="document"
+			transport="http://schemas.xmlsoap.org/soap/http" />
+		<wsdl:operation name="handleError">
+			<soap:operation soapAction="http://eparking.pl/ErrorHandlerService/handleError" />
+			<wsdl:input>
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+	</wsdl:binding>
+	<wsdl:service name="ErrorHandlerService">
+		<wsdl:port binding="tns:ErrorHandlerServiceSOAP" name="ErrorHandlerServiceSOAP">
+			<soap:address location="http://eparking.pl" />
+		</wsdl:port>
+	</wsdl:service>
+</wsdl:definitions>

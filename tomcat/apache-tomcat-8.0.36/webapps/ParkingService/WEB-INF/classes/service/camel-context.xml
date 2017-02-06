@@ -1,0 +1,463 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:camel="http://camel.apache.org/schema/spring"
+	xmlns:cxf="http://camel.apache.org/schema/cxf"
+	xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
+       http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd">
+	
+	<cxf:cxfEndpoint 
+		id="ParkingAplikacjaConnectorEndpoint" 
+		serviceClass="pl.eparking.api.aplikacja.Parking"
+		address="http://parking.app:8071/parkingaplikacja" 
+		serviceName="tns:ParkingAplikacja_Usluga" 
+		endpointName="tns:ParkingAplikacja_Port"
+		wsdlURL="service/ParkingAplikacja.wsdl" 
+		xmlns:tns="http://eparking.pl/api/aplikacja/"
+		loggingFeatureEnabled="true"
+	/>
+
+	<bean id="jmsConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
+		<property name="brokerURL" value="tcp://eparking-mq:61616" />
+		<!-- <property name="trustAllPackages" value="true"/>  -->
+	</bean>
+	<bean id="pooledConnectionFactory" class="org.apache.activemq.pool.PooledConnectionFactory" init-method="start" destroy-method="stop">
+		<property name="maxConnections" value="16" />
+		<property name="connectionFactory" ref="jmsConnectionFactory" />
+	</bean>
+	<bean id="jmsConfig"  class="org.apache.camel.component.jms.JmsConfiguration">
+		<property name="connectionFactory" ref="pooledConnectionFactory"/>
+		<property name="concurrentConsumers" value="20"/>
+	</bean>
+	<bean id="activemq"  class="org.apache.activemq.camel.component.ActiveMQComponent">
+		<property name="configuration" ref="jmsConfig"/>
+	</bean>
+   
+   <bean id="jpa" class="org.apache.camel.component.jpa.JpaComponent">
+		<property name="entityManagerFactory" ref="factory" />
+	</bean>
+	<bean id="factory" class="org.springframework.orm.jpa.LocalEntityManagerFactoryBean">
+		<property name="persistenceUnitName" value="eparkingPU" />
+		<property name="jpaVendorAdapter" ref="jpaAdapter" />
+	</bean>
+	<bean id="jpaAdapter" class="org.springframework.orm.jpa.vendor.OpenJpaVendorAdapter">
+		<property name="databasePlatform" value="org.apache.openjpa.jdbc.sql.MySQLDictionary" />
+		<property name="database" value="MYSQL" />
+	</bean>
+	<bean id="transactionTemplate" class="org.springframework.transaction.support.TransactionTemplate">
+		<property name="transactionManager">
+			<bean class="org.springframework.orm.jpa.JpaTransactionManager">
+				<property name="entityManagerFactory" ref="factory" />
+			</bean>
+		</property>
+	</bean>
+	
+	<bean id="Operator" class="pl.utils.Operator" />
+
+	<camel:camelContext>
+	
+		<camel:errorHandler id="EparkingNEH" type="NoErrorHandler" />
+		
+		<camel:dataFormats>
+			<camel:jaxb id="CurrentServiceDF" contextPath="pl.eparking.parkingservice" prettyPrint="true" />
+			<camel:jaxb id="ParkingAplikacjaDF" contextPath="pl.eparking.api.aplikacja" prettyPrint="true" />
+		</camel:dataFormats>	
+		
+		<camel:restConfiguration component="servlet" bindingMode="json"/>
+		
+		<camel:rest path="/parking" id="ParkingServiceAdapterRest">
+			<camel:post uri="/start/{accountId}" type="pl.eparkingrest.Parking">
+				<camel:to uri="vm:ParkingServiceAdapterStartParking"/>
+			</camel:post>
+			<camel:post uri="/end/{accountId}">
+				<camel:to uri="vm:ParkingServiceAdapterEndParking"/>
+			</camel:post>
+		</camel:rest>
+		
+		<camel:route id="ParkingServiceAdapterStartParking">
+			<camel:from uri="vm:ParkingServiceAdapterStartParking" />
+			<camel:doTry>
+				<camel:setHeader headerName="workerRoute"><camel:simple>${routeId}</camel:simple></camel:setHeader>
+				<camel:bean ref="Operator" method="startParkingAdapterValidate(${headers}, ${body})"/>
+				<camel:bean ref="Operator" method="startParkingRestToStartParking(${headers}, ${body})" />
+				<camel:setHeader headerName="masterClass"><camel:simple>${body.getClass().getName()}</camel:simple></camel:setHeader>
+				<camel:setHeader headerName="workerClass"><camel:simple>${body.getClass().getName()}</camel:simple></camel:setHeader>
+				<camel:wireTap uri="vm:EparkingLogger" />
+				<camel:marshal ref="CurrentServiceDF" />
+				<camel:to uri="activemq:queue:StartParkingQueue?disableReplyTo=true" />
+				<camel:removeHeaders pattern="*" />
+				<camel:setHeader headerName="CamelHttpResponseCode"><camel:simple>200</camel:simple></camel:setHeader>
+			<camel:doCatch>
+				<camel:exception>java.lang.IllegalArgumentException</camel:exception>
+				<camel:handled><camel:constant>true</camel:constant></camel:handled>
+				<camel:to uri="vm:ErrorHandlerAdapter" />
+				<camel:to uri="activemq:queue:StartParkingDLQ?disableReplyTo=true" />
+				<camel:setHeader headerName="CamelHttpResponseCode"><camel:simple>400</camel:simple></camel:setHeader>
+			</camel:doCatch>
+			<camel:doCatch>
+				<camel:exception>java.lang.Exception</camel:exception>
+				<camel:handled><camel:constant>true</camel:constant></camel:handled>
+				<camel:to uri="vm:ErrorHandlerAdapter" />
+				<camel:to uri="activemq:queue:StartParkingDLQ?disableReplyTo=true" />
+				<camel:setHeader headerName="CamelHttpResponseCode"><camel:simple>500</camel:simple></camel:setHeader>
+			</camel:doCatch>
+			<camel:doFinally>
+				<camel:setBody><camel:constant>parking_started</camel:constant></camel:setBody>
+			</camel:doFinally>
+			</camel:doTry>
+		</camel:route>
+
+		<camel:route id="ParkingServiceAdapterEndParking">
+			<camel:from uri="vm:ParkingServiceAdapterEndParking" />
+			<camel:doTry>
+				<camel:setHeader headerName="workerRoute"><camel:simple>${routeId}</camel:simple></camel:setHeader>
+				<camel:bean ref="Operator" method="endParkingAdapterValidate(${headers})"/>
+				<camel:bean ref="Operator" method="endParkingRestToEndParking(${headers})" />
+				<camel:setHeader headerName="masterClass"><camel:simple>${body.getClass().getName()}</camel:simple></camel:setHeader>
+				<camel:setHeader headerName="workerClass"><camel:simple>${body.getClass().getName()}</camel:simple></camel:setHeader>
+				<camel:wireTap uri="vm:EparkingLogger" />
+				<camel:marshal ref="CurrentServiceDF" />
+				<camel:to uri="activemq:queue:EndParkingQueue?disableReplyTo=true" />
+				<camel:removeHeaders pattern="*" />
+				<camel:setHeader headerName="CamelHttpResponseCode"><camel:simple>200</camel:simple></camel:setHeader>
+			<camel:doCatch>
+				<camel:exception>java.lang.IllegalArgumentException</camel:exception>
+				<camel:handled><camel:constant>true</camel:constant></camel:handled>
+				<camel:to uri="vm:ErrorHandlerAdapter" />
+				<camel:to uri="activemq:queue:EndParkingDLQ?disableReplyTo=true" />
+				<camel:setHeader headerName="CamelHttpResponseCode"><camel:simple>400</camel:simple></camel:setHeader>
+			</camel:doCatch>
+			<camel:doCatch>
+				<camel:exception>java.lang.Exception</camel:exception>
+				<camel:handled><camel:constant>true</camel:constant></camel:handled>
+				<camel:to uri="vm:ErrorHandlerAdapter" />
+				<camel:to uri="activemq:queue:EndParkingDLQ?disableReplyTo=true" />
+				<camel:setHeader headerName="CamelHttpResponseCode"><camel:simple>500</camel:simple></camel:setHeader>
+			</camel:doCatch>
+			<camel:doFinally>
+				<camel:setBody><camel:constant>parking_ended</camel:constant></camel:setBody>
+			</camel:doFinally>
+			</camel:doTry>
+		</camel:route>
+		
+		<camel:route id="ParkingServiceBaseStartParkingQueue">
+			<camel:from uri="activemq:queue:StartParkingQueue"/>
+			<camel:unmarshal ref="CurrentServiceDF" />
+			<camel:to uri="vm:ParkingServiceBaseStartParking" />
+		</camel:route>
+		
+		<camel:route id="ParkingServiceBaseStartParking" errorHandlerRef="EparkingNEH">
+			<camel:from uri="vm:ParkingServiceBaseStartParking"/>
+			<camel:doTry>
+			<camel:setHeader headerName="masterClass"><camel:simple>${body.getClass().getName()}</camel:simple></camel:setHeader>
+			<camel:setHeader headerName="workerClass"><camel:simple>${body.getClass().getName()}</camel:simple></camel:setHeader>
+			<camel:setHeader headerName="workerRoute"><camel:simple>${routeId}</camel:simple></camel:setHeader>
+			<camel:wireTap uri="vm:EparkingLogger" />
+			<camel:setProperty propertyName="startParking"><camel:simple>${body}</camel:simple></camel:setProperty>
+			<camel:setProperty propertyName="parking"><camel:method ref="Operator" method="calculateParkingStart(${exchangeProperty.startParking})"/></camel:setProperty>
+			<camel:bean ref="Operator" method="startParkingToGetAccount(${exchangeProperty.startParking})" />
+			<camel:to uri="vm:AccountServiceConnectorGetAccount" pattern="InOut" />
+			<camel:setProperty propertyName="account"><camel:simple>${body.getAccount()}</camel:simple></camel:setProperty>
+			<camel:bean ref="Operator" method="startParkingToGetParking(${exchangeProperty.startParking})" />
+			<camel:to uri="vm:ParkingServiceConnectorGetParking" pattern="InOut" />
+			<camel:setProperty propertyName="existing_parking"><camel:simple>${body.getParking()}</camel:simple></camel:setProperty>
+			<camel:choice>
+			<camel:when>
+				<camel:simple>${exchangeProperty.existing_parking} != null</camel:simple>
+				<camel:setHeader headerName="requestOriginal"><camel:simple>${exchangeProperty.startParking}</camel:simple></camel:setHeader>
+				<camel:throwException message="EparkingProcessingException: Parking already started" exceptionType="java.io.IOException" />
+			</camel:when>
+			<camel:otherwise>
+			<camel:bean ref="Operator" method="startParkingToRechargeBill(${exchangeProperty.startParking}, ${exchangeProperty.account}, ${exchangeProperty.parking}, 'false')" />
+			<camel:to uri="vm:BillServiceBaseRechargeBill" pattern="InOut" />
+			<camel:setProperty propertyName="bill_recharged"><camel:constant>true</camel:constant></camel:setProperty>
+			<camel:setProperty propertyName="bill"><camel:simple>${body.getBill()}</camel:simple></camel:setProperty>
+			<camel:bean ref="Operator" method="startParkingToAddParking(${exchangeProperty.startParking}, ${exchangeProperty.account}, ${exchangeProperty.parking}, ${exchangeProperty.bill})"/>
+			<camel:to uri="vm:ParkingServiceConnectorAddParking" pattern="InOut" />
+			<camel:setProperty propertyName="parking"><camel:method ref="Operator" method="addParkingId(${exchangeProperty.parking}, ${body.getParking()})" /></camel:setProperty>				
+			<camel:bean ref="Operator" method="startParkingToSaveParking(${exchangeProperty.startParking}, ${exchangeProperty.account}, ${exchangeProperty.parking})"/>
+			<camel:to uri="vm:ParkingServiceConnectorSaveParking" pattern="InOut" />
+			<camel:setProperty propertyName="parking_saved"><camel:constant>true</camel:constant></camel:setProperty>
+			<camel:bean ref="Operator" method="startParkingToNotifyParking(${exchangeProperty.startParking}, ${exchangeProperty.account.getAccountId()}, ${exchangeProperty.parking.getParkingId()})"/>
+			<camel:to uri="vm:ParkingServiceConnectorNotifyParking" pattern="InOut" />
+			<camel:bean ref="Operator" method="startParkingResponse()" />
+			</camel:otherwise>
+			</camel:choice>
+			<camel:doCatch>
+				<camel:exception>java.lang.Exception</camel:exception>
+				<camel:handled><camel:constant>true</camel:constant></camel:handled>
+				<camel:setProperty propertyName="workerRouteOriginal"><camel:simple>${headers.workerRoute}</camel:simple></camel:setProperty>
+				<camel:choice>
+				<camel:when>
+					<camel:simple>${exchangeProperty.bill_recharged} == true</camel:simple>
+					<camel:log message="BillRecharge compensation start"></camel:log>
+					<camel:bean ref="Operator" method="startParkingToRechargeBill(${exchangeProperty.startParking}, ${exchangeProperty.account}, ${exchangeProperty.parking}, 'true')" />
+					<camel:to uri="vm:BillServiceBaseRechargeBill" pattern="InOut" />
+					<camel:log message="BillRecharge compensation end"></camel:log>
+				</camel:when>
+				<camel:when>
+					<camel:simple>${exchangeProperty.parking_saved} == true</camel:simple>
+					<camel:log message="SaveParking compensation start"></camel:log>
+					<camel:bean ref="Operator" method="startParkingToUpdateParking(${exchangeProperty.startParking}, ${exchangeProperty.account.getAccountId()})" />
+					<camel:to uri="vm:ParkingServiceConnectorUpdateParking" pattern="InOut" />
+					<camel:log message="SaveParking compensation end"></camel:log>							
+				</camel:when>
+				</camel:choice>
+				<camel:setHeader headerName="workerRoute"><camel:simple>${exchangeProperty.workerRouteOriginal}</camel:simple> </camel:setHeader>
+				<camel:setHeader headerName="requestOriginal"><camel:simple>${exchangeProperty.startParking}</camel:simple></camel:setHeader>
+				<camel:to uri="vm:ErrorHandlerAdapter" pattern="InOut" />
+				<camel:to uri="activemq:queue:StartParkingDLQ?disableReplyTo=true" />
+			</camel:doCatch>
+			</camel:doTry>
+		</camel:route>
+		
+		<camel:route id="ParkingServiceBaseEndParkingQueue">
+			<camel:from uri="activemq:queue:EndParkingQueue"/>
+			<camel:unmarshal ref="CurrentServiceDF" />
+			<camel:to uri="vm:ParkingServiceBaseEndParking" />		
+		</camel:route>
+		
+		<camel:route id="ParkingServiceBaseEndParking" errorHandlerRef="EparkingNEH"> 
+			<camel:from uri="vm:ParkingServiceBaseEndParking"/>
+			<camel:doTry>
+			<camel:setHeader headerName="masterClass"><camel:simple>${body.getClass().getName()}</camel:simple></camel:setHeader>
+			<camel:setHeader headerName="workerClass"><camel:simple>${body.getClass().getName()}</camel:simple></camel:setHeader>
+			<camel:setHeader headerName="workerRoute"><camel:simple>${routeId}</camel:simple></camel:setHeader>
+			<camel:wireTap uri="vm:EparkingLogger" />		
+			<camel:setProperty propertyName="endParking"><camel:simple>${body}</camel:simple></camel:setProperty>
+			<camel:bean ref="Operator" method="endParkingToGetAccount(${exchangeProperty.endParking})" />
+			<camel:to uri="vm:AccountServiceConnectorGetAccount" pattern="InOut" />
+			<camel:setProperty propertyName="account"><camel:simple>${body.getAccount()}</camel:simple></camel:setProperty>
+			<camel:bean ref="Operator" method="endParkingToGetParking(${exchangeProperty.endParking})" />
+			<camel:to uri="vm:ParkingServiceConnectorGetParking" pattern="InOut" />
+			<camel:setProperty propertyName="parking"><camel:simple>${body.getParking()}</camel:simple></camel:setProperty>
+			<camel:choice>
+			<camel:when>
+			<camel:simple>${exchangeProperty.parking} != null</camel:simple>
+			<camel:setProperty propertyName="parking"><camel:method ref="Operator" method="calculateParkingEnd(${exchangeProperty.parking})"/></camel:setProperty>
+			<camel:bean ref="Operator" method="endParkingToRechargeBill(${exchangeProperty.endParking}, ${exchangeProperty.account}, ${exchangeProperty.parking}, 'false')" />
+			<camel:to uri="vm:BillServiceBaseRechargeBill" pattern="InOut" />
+			<camel:setProperty propertyName="bill"><camel:simple>${body.getBill()}</camel:simple></camel:setProperty>
+			<camel:setProperty propertyName="bill_recharged"><camel:constant>true</camel:constant></camel:setProperty>
+			<camel:bean ref="Operator" method="endParkingToModifyParking(${exchangeProperty.endParking}, ${exchangeProperty.account}, ${exchangeProperty.parking})"/>
+			<camel:to uri="vm:ParkingServiceConnectorModifyParking" pattern="InOut" />
+			<camel:bean ref="Operator" method="endParkingToUpdateParking(${exchangeProperty.endParking}, ${exchangeProperty.parking}, ${exchangeProperty.account.getAccountId()}, 'false')"/>
+			<camel:to uri="vm:ParkingServiceConnectorUpdateParking" pattern="InOut" />
+			<camel:setProperty propertyName="parking_updated"><camel:constant>true</camel:constant></camel:setProperty>
+			<camel:bean ref="Operator" method="endParkingToNotifyParking(${exchangeProperty.endParking}, ${exchangeProperty.account.getAccountId()}, ${exchangeProperty.parking.getParkingId()})"/>
+			<camel:to uri="vm:ParkingServiceConnectorNotifyParking" pattern="InOut" />
+			<camel:bean ref="Operator" method="endParkingResponse()" />
+			</camel:when>
+			<camel:otherwise>
+				<camel:setHeader headerName="requestOriginal"><camel:simple>${exchangeProperty.endParking}</camel:simple></camel:setHeader>
+				<camel:throwException message="EparkingProcessingException: Parking not started" exceptionType="java.io.IOException" />
+			</camel:otherwise>
+			</camel:choice>
+			<camel:doCatch>
+				<camel:exception>java.lang.Exception</camel:exception>
+				<camel:handled><camel:constant>true</camel:constant></camel:handled>
+				<camel:setProperty propertyName="workerRouteOriginal"><camel:simple>${headers.workerRoute}</camel:simple></camel:setProperty>
+				<camel:choice>
+				<camel:when>
+					<camel:simple>${exchangeProperty.bill_recharged} == true</camel:simple>
+					<camel:log message="BillRecharge compensation start"></camel:log>
+					<camel:bean ref="Operator" method="endParkingToRechargeBill(${exchangeProperty.endParking}, ${exchangeProperty.account}, ${exchangeProperty.parking}, 'true')" />
+					<camel:to uri="vm:BillServiceBaseRechargeBill" pattern="InOut" />
+					<camel:log message="BillRecharge compensation end"></camel:log>
+				</camel:when>
+				<camel:when>
+					<camel:simple>${exchangeProperty.parking_updated} == true</camel:simple>
+					<camel:log message="SaveParking compensation start"></camel:log>
+					<camel:bean ref="Operator" method="endParkingToUpdateParking(${exchangeProperty.endParking}, ${exchangeProperty.parking}, ${exchangeProperty.account.getAccountId(), 'true'})"/>
+					<camel:to uri="vm:ParkingServiceConnectorUpdateParking" pattern="InOut" />
+					<camel:log message="SaveParking compensation end"></camel:log>							
+				</camel:when>
+				</camel:choice>
+				<camel:setHeader headerName="workerRoute"><camel:simple>${exchangeProperty.workerRouteOriginal}</camel:simple> </camel:setHeader>
+				<camel:setHeader headerName="requestOriginal"><camel:simple>${exchangeProperty.endParking}</camel:simple></camel:setHeader>
+				<camel:to uri="vm:ErrorHandlerAdapter" pattern="InOut" />
+				<camel:to uri="activemq:queue:EndParkingDLQ?disableReplyTo=true" />
+			</camel:doCatch>
+			</camel:doTry>
+		</camel:route>
+		
+		
+		
+		<camel:route id="ParkingServiceConnectorAddParking" errorHandlerRef="EparkingNEH">
+			<camel:from uri="vm:ParkingServiceConnectorAddParking" />
+			<camel:removeHeaders pattern="*" excludePattern="masterClass|requestOriginal"/>
+			<camel:setHeader headerName="workerClass"><camel:simple>${body.getClass().getName()}</camel:simple></camel:setHeader>
+			<camel:setHeader headerName="workerRoute"><camel:simple>${routeId}</camel:simple></camel:setHeader>
+			<camel:setProperty propertyName="addParking"><camel:simple>${body}</camel:simple></camel:setProperty>
+			<camel:wireTap uri="vm:EparkingLogger" />
+			<camel:bean ref="Operator" method="addParkingConnector(${body})" />
+			<camel:marshal ref="ParkingAplikacjaDF" />
+			<camel:setHeader headerName="operationName"><camel:simple>DodajParking</camel:simple></camel:setHeader>
+			<camel:to uri="cxf:bean:ParkingAplikacjaConnectorEndpoint?dataFormat=PAYLOAD"/>
+			<camel:unmarshal ref="ParkingAplikacjaDF" />
+			<camel:choice>
+				<camel:when>
+					<camel:simple>${body.getDodajParkingSukces()} != 1</camel:simple>
+					<camel:setHeader headerName="requestOriginal"><camel:simple>${exchangeProperty.addParking}</camel:simple></camel:setHeader>
+					<camel:throwException message="EparkingProcessingException: Other ParkingAplikacja Exception" exceptionType="java.io.IOException" />
+				</camel:when>
+				<camel:when>
+					<camel:simple>${body.getDodajParkingParking()} == null || ${body.getDodajParkingParking()} == ""</camel:simple>
+					<camel:setHeader headerName="requestOriginal"><camel:simple>${exchangeProperty.addParking}</camel:simple></camel:setHeader>
+					<camel:throwException message="EparkingProcessingException: Missing ParkingId in ParkingAplikacja Response" exceptionType="java.io.IOException" />
+				</camel:when>
+				<camel:otherwise>
+					<camel:bean ref="Operator" method="addParkingConnectorResponse(${body})" />
+				</camel:otherwise>
+			</camel:choice>
+			<camel:wireTap uri="vm:EparkingLogger" />
+		</camel:route>
+
+		<camel:route id="ParkingServiceConnectorModifyParking" errorHandlerRef="EparkingNEH">
+			<camel:from uri="vm:ParkingServiceConnectorModifyParking" />
+			<camel:removeHeaders pattern="*" excludePattern="masterClass|requestOriginal" />
+			<camel:setHeader headerName="workerClass"><camel:simple>${body.getClass().getName()}</camel:simple></camel:setHeader>
+			<camel:setHeader headerName="workerRoute"><camel:simple>${routeId}</camel:simple></camel:setHeader>
+			<camel:setProperty propertyName="modifyParking"><camel:simple>${body}</camel:simple></camel:setProperty>
+			<camel:wireTap uri="vm:EparkingLogger" />
+			<camel:bean ref="Operator" method="modifyParkingConnector(${body})" />
+			<camel:setHeader headerName="operationName"><camel:simple>ModyfikujParking</camel:simple></camel:setHeader>
+			<camel:marshal ref="ParkingAplikacjaDF" />
+			<camel:to uri="cxf:bean:ParkingAplikacjaConnectorEndpoint?dataFormat=PAYLOAD" />
+			<camel:unmarshal ref="ParkingAplikacjaDF" />
+			<camel:choice>
+				<camel:when>
+					<camel:simple>${body.getModyfikujParkingSukces()} != 1</camel:simple>
+					<camel:setHeader headerName="requestOriginal"><camel:simple>${exchangeProperty.modifyParking}</camel:simple></camel:setHeader>
+					<camel:throwException message="EparkingProcessingException: Other ParkingAplikacja Exception" exceptionType="java.io.IOException" />
+				</camel:when>
+				<camel:otherwise>
+					<camel:bean ref="Operator" method="modifyParkingConnectorResponse(${body})" />
+				</camel:otherwise>
+			</camel:choice>
+			<camel:wireTap uri="vm:EparkingLogger" />
+		</camel:route>
+		
+		<camel:route id="ParkingServiceConnectorNotifyParking" errorHandlerRef="EparkingNEH">
+			<camel:from uri="vm:ParkingServiceConnectorNotifyParking" />
+			<camel:removeHeaders pattern="*" excludePattern="masterClass|requestOriginal" />
+			<camel:setHeader headerName="workerClass"><camel:simple>${body.getClass().getName()}</camel:simple></camel:setHeader>
+			<camel:setHeader headerName="workerRoute"><camel:simple>${routeId}</camel:simple></camel:setHeader>
+			<camel:wireTap uri="vm:EparkingLogger" />
+			<camel:setHeader headerName="accountId"><camel:simple>${body.getAccount().getAccountId()}</camel:simple></camel:setHeader>
+			<camel:setHeader headerName="parkingId"><camel:simple>${body.getParking().getParkingId()}</camel:simple></camel:setHeader>
+			<camel:setHeader headerName="action"><camel:method ref="Operator" method="notifyParkingConnectorGetAction(${body.getParkingAction()})"/></camel:setHeader>
+			<camel:to uri="restlet:http://client.app:8091/api/account/{accountId}/notify/{parkingId}/{action}?restletMethod=post" />
+			<camel:setBody><camel:constant></camel:constant></camel:setBody>
+		</camel:route>
+
+		<camel:route id="ParkingServiceConnectorAddControl" errorHandlerRef="EparkingNEH">
+			<camel:from uri="vm:ParkingServiceConnectorAddControl" />
+			<camel:removeHeaders pattern="*" excludePattern="masterClass|requestOriginal"/>
+			<camel:setHeader headerName="workerClass"><camel:simple>${body.getClass().getName()}</camel:simple></camel:setHeader>
+			<camel:setHeader headerName="workerRoute"><camel:simple>${routeId}</camel:simple></camel:setHeader>
+			<camel:setProperty propertyName="addControl"><camel:simple>${body}</camel:simple></camel:setProperty>
+			<camel:wireTap uri="vm:EparkingLogger" />
+			<camel:bean ref="Operator" method="addControlConnector(${body})" />
+			<camel:setHeader headerName="operationName"><camel:simple>DodajKontrole</camel:simple></camel:setHeader>
+			<camel:marshal ref="ParkingAplikacjaDF" />
+			<camel:to uri="cxf:bean:ParkingAplikacjaConnectorEndpoint?dataFormat=PAYLOAD"/>
+			<camel:unmarshal ref="ParkingAplikacjaDF" />
+			<camel:choice>
+				<camel:when>
+					<camel:simple>${body.getDodajKontroleSukces()} != 1</camel:simple>
+					<camel:setHeader headerName="requestOriginal"><camel:simple>${exchangeProperty.addControl}</camel:simple></camel:setHeader>
+					<camel:throwException message="EparkingProcessingException: Other ParkingAplikacja Exception" exceptionType="java.io.IOException" />
+				</camel:when>
+				<camel:when>
+					<camel:simple>${body.getDodajKontroleKontrola()} == null || ${body.getDodajKontroleKontrola()} == ""</camel:simple>
+					<camel:setHeader headerName="requestOriginal"><camel:simple>${exchangeProperty.addControl}</camel:simple></camel:setHeader>
+					<camel:throwException message="EparkingProcessingException: Missing ControlId in ParkingAplikacja Response" exceptionType="java.io.IOException" />
+				</camel:when>
+				<camel:otherwise>
+					<camel:bean ref="Operator" method="addControlConnectorResponse(${body})" />
+				</camel:otherwise>
+			</camel:choice>
+			<camel:wireTap uri="vm:EparkingLogger" />
+		</camel:route>
+
+		<camel:route id="ParkingServiceConnectorAddFine" errorHandlerRef="EparkingNEH">
+			<camel:from uri="vm:ParkingServiceConnectorAddFine" />
+			<camel:removeHeaders pattern="*" excludePattern="masterClass|requestOriginal" />
+			<camel:setHeader headerName="workerClass"><camel:simple>${body.getClass().getName()}</camel:simple></camel:setHeader>
+			<camel:setHeader headerName="workerRoute"><camel:simple>${routeId}</camel:simple></camel:setHeader>
+			<camel:setProperty propertyName="addFine"><camel:simple>${body}</camel:simple></camel:setProperty>
+			<camel:wireTap uri="vm:EparkingLogger" />
+			<camel:bean ref="Operator" method="addFineConnector(${body})" />
+			<camel:setHeader headerName="operationName"><camel:simple>DodajMandat</camel:simple></camel:setHeader>
+			<camel:marshal ref="ParkingAplikacjaDF" />
+			<camel:to uri="cxf:bean:ParkingAplikacjaConnectorEndpoint?dataFormat=PAYLOAD"/>
+			<camel:unmarshal ref="ParkingAplikacjaDF" />
+			<camel:choice>
+				<camel:when>
+					<camel:simple>${body.getDodajMandatSukces()} != 1</camel:simple>
+					<camel:setHeader headerName="requestOriginal"><camel:simple>${exchangeProperty.addFine}</camel:simple></camel:setHeader>
+					<camel:throwException message="EparkingProcessingException: Other ParkingAplikacja Exception" exceptionType="java.io.IOException" />
+				</camel:when>
+				<camel:when>
+					<camel:simple>${body.getDodajMandatIdMandatu()} == null || ${body.getDodajMandatIdMandatu()} == ""</camel:simple>
+					<camel:setHeader headerName="requestOriginal"><camel:simple>${exchangeProperty.addFine}</camel:simple></camel:setHeader>
+					<camel:throwException message="EparkingProcessingException: Missing FineId in ParkingAplikacja Response" exceptionType="java.io.IOException" />
+				</camel:when>
+				<camel:otherwise>
+					<camel:bean ref="Operator" method="addFineConnectorResponse(${body})" />
+				</camel:otherwise>
+			</camel:choice>
+			<camel:wireTap uri="vm:EparkingLogger" />
+		</camel:route>
+
+		<camel:route id="ParkingServiceConnectorSaveParking" errorHandlerRef="EparkingNEH">
+			<camel:from uri="vm:ParkingServiceConnectorSaveParking" />
+			<camel:setHeader headerName="workerClass"><camel:simple>${body.getClass().getName()}</camel:simple></camel:setHeader>
+			<camel:setHeader headerName="workerRoute"><camel:simple>${routeId}</camel:simple></camel:setHeader>
+			<camel:wireTap uri="vm:EparkingLogger" />
+			<camel:bean ref="Operator" method="saveParkingToParking(${body})" />
+			<camel:to uri="jpa://pl.eparkingdb.Parking?persistenceUnit=eparkingPU" />
+			<camel:bean ref="Operator" method="parkingToSaveParkingResponse(${body})" />
+			<camel:wireTap uri="vm:EparkingLogger" />
+		</camel:route>
+
+		<camel:route id="ParkingServiceConnectorUpdateParking" errorHandlerRef="EparkingNEH">
+			<camel:from uri="vm:ParkingServiceConnectorUpdateParking" />
+			<camel:setHeader headerName="workerClass"><camel:simple>${body.getClass().getName()}</camel:simple></camel:setHeader>
+			<camel:setHeader headerName="workerRoute"><camel:simple>${routeId}</camel:simple></camel:setHeader>
+			<camel:wireTap uri="vm:EparkingLogger" />
+			<camel:setHeader headerName="serviceName"><camel:simple>${routeId}</camel:simple></camel:setHeader>
+			<camel:bean ref="Operator" method="updateParking(${body})" />
+			<camel:wireTap uri="vm:EparkingLogger" />
+		</camel:route>
+		
+		<camel:route id="ParkingServiceConnectorGetParking" errorHandlerRef="EparkingNEH">
+			<camel:from uri="vm:ParkingServiceConnectorGetParking" />
+			<camel:setHeader headerName="workerClass"><camel:simple>${body.getClass().getName()}</camel:simple></camel:setHeader>
+			<camel:setHeader headerName="workerRoute"><camel:simple>${routeId}</camel:simple></camel:setHeader>
+			<camel:wireTap uri="vm:EparkingLogger" />
+			<camel:bean ref="Operator" method="getParking(${body})" />
+			<camel:wireTap uri="vm:EparkingLogger" />
+		</camel:route>
+		
+		<!-- <camel:route id="ParkingServiceConnectorFinishParking">
+			<camel:from uri="timer://ParkingFinisher?fixedRate=true&amp;period=60s"/>
+			<camel:doTry>
+				<camel:bean ref="Operator" method="finishParking()" />
+				<camel:log message="ParkingServiceConnectorFinishParking: Finished ${body} parkings." />
+				<camel:doCatch>
+					<camel:exception>java.lang.Exception</camel:exception>
+					<camel:handled><camel:simple>false</camel:simple></camel:handled>
+					<camel:setHeader headerName="currentServiceName"><camel:simple>${routeId}</camel:simple></camel:setHeader>
+					<camel:to uri="direct-vm:ParkingServiceErrorHandler" />
+				</camel:doCatch>
+			</camel:doTry>
+		</camel:route> -->
+
+	</camel:camelContext>
+
+</beans>

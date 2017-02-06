@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://eparking.pl/vehicleservice"
+	xmlns:tns="http://eparking.pl/vehicleservice" elementFormDefault="qualified"
+	xmlns:Q1="http://eparking.pl/base" xmlns:Q2="http://eparking.pl/technical">
+
+	<import schemaLocation="../cdm/BaseModel.xsd" namespace="http://eparking.pl/base"></import>
+	<import schemaLocation="../cdm/TechnicalModel.xsd" namespace="http://eparking.pl/technical"></import>
+			<element name="addVehicle" type="tns:addVehicle">
+			</element>
+			<element name="addVehicleResponse" type="tns:addVehicleResponse">
+			</element>
+
+			<complexType name="addVehicle">
+				<complexContent>
+					<extension base="Q2:BaseRequest">
+						<sequence>
+							<element ref="Q1:Vehicle"></element>
+						</sequence>
+					</extension>
+				</complexContent>
+			</complexType>
+
+			<complexType name="addVehicleResponse">
+				<complexContent>
+					<extension base="Q2:BaseResponse">
+						<sequence>
+							<element ref="Q1:Vehicle" minOccurs="0"></element>
+						</sequence>
+					</extension>
+				</complexContent>
+			</complexType>
+</schema>

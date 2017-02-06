@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:camel="http://camel.apache.org/schema/spring"
+	xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+		
+	<bean id="Operator" class="pl.utils.Operator" />
+	
+	<camel:camelContext messageHistory="true">
+
+		<camel:propertyPlaceholder id="eparkingProperties" location="classpath:eparking.properties"/>
+
+		<camel:errorHandler id="EparkingNEH" type="NoErrorHandler" />
+		
+		<camel:dataFormats>
+			<camel:jaxb id="CurrentServiceDF" contextPath="pl.eparking.billservice" schema="classpath:service/BillServiceBase.xsd" />
+		</camel:dataFormats>
+		
+		<camel:restConfiguration component="servlet" bindingMode="json"/>
+		
+		<camel:rest path="/bill" id="BillServiceAdapterRest">
+			<camel:post uri="/recharge">
+				<camel:route id="BillServiceAdapterRechargeBill">
+					<camel:doTry>
+						<camel:setHeader headerName="workerRoute"><camel:simple>${routeId}</camel:simple></camel:setHeader>												
+						<camel:bean ref="Operator" method="rechargeBillAdapterValidate(${headers})"/>
+						<camel:bean ref="Operator" method="rechargeBillAdapter(${header.billId}, ${header.personId}, ${header.amount})"/>
+						<camel:setProperty propertyName="rechargeBill"><camel:simple>${body}</camel:simple></camel:setProperty>
+						<camel:setHeader headerName="masterClass"><camel:simple>${body.getClass().getName()}</camel:simple></camel:setHeader>
+						<camel:setHeader headerName="workerClass"><camel:simple>${body.getClass().getName()}</camel:simple></camel:setHeader>
+						<camel:wireTap uri="vm:EparkingLogger" />
+						<camel:to uri="vm:BillServiceBaseRechargeBill" />
+						<camel:removeHeaders pattern="*" />
+						<camel:setHeader headerName="CamelHttpResponseCode"><camel:simple>200</camel:simple></camel:setHeader>
+						<camel:setHeader headerName="Balance"><camel:simple>${body.getBill().getBalance()}</camel:simple></camel:setHeader>
+					<camel:doCatch>
+						<camel:exception>java.lang.IllegalArgumentException</camel:exception>
+						<camel:handled><camel:constant>true</camel:constant></camel:handled>
+						<camel:setHeader headerName="requestOriginal"><camel:simple>${exchangeProperty.rechargeBill}</camel:simple></camel:setHeader>
+						<camel:to uri="vm:ErrorHandlerAdapter" />
+						<camel:setHeader headerName="CamelHttpResponseCode"><camel:simple>400</camel:simple></camel:setHeader>
+					</camel:doCatch>
+					<camel:doCatch>
+						<camel:exception>java.lang.Exception</camel:exception>
+						<camel:handled><camel:constant>true</camel:constant></camel:handled>
+						<camel:setHeader headerName="requestOriginal"><camel:simple>${exchangeProperty.rechargeBill}</camel:simple></camel:setHeader>
+						<camel:to uri="vm:ErrorHandlerAdapter" />
+						<camel:setHeader headerName="CamelHttpResponseCode"><camel:simple>500</camel:simple></camel:setHeader>
+					</camel:doCatch>
+					<camel:doFinally>
+						<camel:setBody><camel:simple>null</camel:simple></camel:setBody>
+					</camel:doFinally>
+					</camel:doTry>
+				</camel:route>
+			</camel:post>
+		</camel:rest>
+
+		<camel:route id="BillServiceBaseRechargeBill" errorHandlerRef="EparkingNEH" >
+			<camel:from uri="vm:BillServiceBaseRechargeBill" />
+			<camel:setHeader headerName="workerClass"><camel:simple>${body.getClass().getName()}</camel:simple></camel:setHeader>
+			<camel:setHeader headerName="workerRoute"><camel:simple>${routeId}</camel:simple></camel:setHeader>
+			<camel:wireTap uri="vm:EparkingLogger" />
+			<camel:choice>
+				<camel:when>
+					<camel:simple>${body.getBillRecharge().getBill().getBillId()} == null || ${body.getBillRecharge().getBill().getBillId()} == ""</camel:simple>
+					<camel:setHeader headerName="requestOriginal"><camel:simple>${body}</camel:simple></camel:setHeader>
+					<camel:throwException message="EparkingValidationException: Missing Bill.BillId in rechargeBill Request" exceptionType="java.io.IOException" />					
+				</camel:when>
+				<camel:when>
+					<camel:simple>${body.getBillRecharge().getBill().getPerson().getPersonId()} == null || ${body.getBillRecharge().getBill().getPerson().getPersonId()} == ""</camel:simple>
+					<camel:setHeader headerName="requestOriginal"><camel:simple>${body}</camel:simple></camel:setHeader>
+					<camel:throwException message="EparkingValidationException: Missing Bill.Person.PersonId in rechargeBill Request" exceptionType="java.io.IOException" />					
+				</camel:when>
+				<camel:when>
+					<camel:simple>${body.getBillRecharge().getAmount()} == null || ${body.getBillRecharge().getAmount()} == ""</camel:simple>
+					<camel:setHeader headerName="requestOriginal"><camel:simple>${body}</camel:simple></camel:setHeader>
+					<camel:throwException message="EparkingValidationException: Missing Amount in rechargeBill Request" exceptionType="java.io.IOException" />					
+				</camel:when>
+				<camel:otherwise>
+					<camel:setProperty propertyName="rechargeBill"><camel:simple>${body}</camel:simple></camel:setProperty>
+					<camel:bean ref="Operator" method="rechargeBillToGetBill(${exchangeProperty.rechargeBill})"/>
+					<camel:to uri="vm:BillServiceConnectorGetBill"/>
+					<camel:setProperty propertyName="getBillResponse"><camel:simple>${body}</camel:simple></camel:setProperty>			
+					<camel:bean ref="Operator" method="getBillResponseToModifyBill(${exchangeProperty.getBillResponse}, ${exchangeProperty.rechargeBill})"/>
+					<camel:setProperty propertyName="modifyBill"><camel:simple>${body}</camel:simple></camel:setProperty>
+					<camel:to uri="vm:BillServiceConnectorModifyBill"/>
+					<camel:bean ref="Operator" method="modifyBillResponseToRechargeBillResponse(${exchangeProperty.getBillResponse}, ${exchangeProperty.modifyBill})"/>
+				</camel:otherwise>
+			</camel:choice>
+			<camel:wireTap uri="vm:EparkingLogger" />
+		</camel:route>
+
+		
+		<camel:route id="BillServiceBaseRegisterBill" errorHandlerRef="EparkingNEH" >
+			<camel:from uri="vm:BillServiceBaseRegisterBill" />
+			<camel:setHeader headerName="workerClass"><camel:simple>${body.getClass().getName()}</camel:simple></camel:setHeader>
+			<camel:setHeader headerName="workerRoute"><camel:simple>${routeId}</camel:simple></camel:setHeader>
+			<camel:wireTap uri="vm:EparkingLogger" />
+			<camel:bean ref="Operator" method="registerBillToAddBill(${body})" />
+			<camel:to uri="vm:BillServiceConnectorAddBill" />
+			<camel:bean ref="Operator" method="addBillResponseToRegisterBillResponse(${body})" />
+			<camel:wireTap uri="vm:EparkingLogger" />
+		</camel:route>
+
+		<camel:route id="BillServiceConnectorAddBill" errorHandlerRef="EparkingNEH" >
+			<camel:from uri="vm:BillServiceConnectorAddBill" />
+			<camel:setHeader headerName="workerClass"><camel:simple>${body.getClass().getName()}</camel:simple></camel:setHeader>
+			<camel:setHeader headerName="workerRoute"><camel:simple>${routeId}</camel:simple></camel:setHeader>
+			<camel:wireTap uri="vm:EparkingLogger" />
+			<camel:choice>
+				<camel:when>
+					<camel:simple>${body.getPerson().getPersonId()} == null || ${body.getPerson().getPersonId()} == ""</camel:simple>
+					<camel:setHeader headerName="requestOriginal"><camel:simple>${body}</camel:simple></camel:setHeader>
+					<camel:throwException message="EparkingValidationException: Missing PersonId in addBill Request" exceptionType="java.io.IOException" />
+				</camel:when>
+				<camel:otherwise>
+					<camel:setProperty propertyName="bill">
+						<camel:method ref="Operator" method="createBill(${body})" />
+					</camel:setProperty>
+					<camel:setProperty propertyName="fileName">
+						<camel:method ref="Operator" method="getBillFileName(${exchangeProperty.bill})" />
+					</camel:setProperty>
+					<camel:bean ref="Operator" method="transformBill(${exchangeProperty.bill})" />
+					<camel:marshal><camel:csv delimiter=";"/></camel:marshal>
+					<camel:to uri="file:{{bill.file.location}}?fileName=${exchangeProperty.fileName}" />
+					<camel:bean ref="Operator" method="addBillResponse(${exchangeProperty.bill})" />						
+				</camel:otherwise>
+			</camel:choice>
+			<camel:wireTap uri="vm:EparkingLogger" />
+		</camel:route>
+
+		<camel:route id="BillServiceConnectorGetBill" errorHandlerRef="EparkingNEH" >
+			<camel:from uri="vm:BillServiceConnectorGetBill" />
+			<camel:setHeader headerName="workerClass"><camel:simple>${body.getClass().getName()}</camel:simple></camel:setHeader>
+			<camel:setHeader headerName="workerRoute"><camel:simple>${routeId}</camel:simple></camel:setHeader>
+			<camel:wireTap uri="vm:EparkingLogger" />
+			<camel:choice>
+				<camel:when>
+					<camel:simple>${body.getBill().getBillId()} == null || ${body.getBill().getBillId()} == ""</camel:simple>
+					<camel:setHeader headerName="requestOriginal"><camel:simple>${body}</camel:simple></camel:setHeader>
+					<camel:throwException message="EparkingValidationException: Missing Bill.BillId in getBill Request" exceptionType="java.io.IOException" />
+				</camel:when>
+				<camel:when>
+					<camel:simple>${body.getBill().getPerson().getPersonId()} == null || ${body.getBill().getPerson().getPersonId()} == ""</camel:simple>
+					<camel:setHeader headerName="requestOriginal"><camel:simple>${body}</camel:simple></camel:setHeader>
+					<camel:throwException message="EparkingValidationException: Missing Bill.Person.PersonId in getBill Request" exceptionType="java.io.IOException" />
+				</camel:when>
+				<camel:otherwise>
+					<camel:setProperty propertyName="fileName">
+						<camel:method ref="Operator" method="getBillFileName(${body.getBill()})" />
+					</camel:setProperty>
+					<camel:bean ref="Operator" method="getFile({{bill.file.location}}, ${exchangeProperty.fileName})"/>
+					<camel:unmarshal><camel:csv delimiter=";"/></camel:unmarshal>
+					<camel:bean ref="Operator" method="getBillResponse(${body})"/>
+				</camel:otherwise>
+			</camel:choice>
+			<camel:wireTap uri="vm:EparkingLogger" />
+		</camel:route>
+		
+		<camel:route id="BillServiceConnectorModifyBill" errorHandlerRef="EparkingNEH" >
+			<camel:from uri="vm:BillServiceConnectorModifyBill" />
+			<camel:setHeader headerName="workerClass"><camel:simple>${body.getClass().getName()}</camel:simple></camel:setHeader>
+			<camel:setHeader headerName="workerRoute"><camel:simple>${routeId}</camel:simple></camel:setHeader>
+			<camel:wireTap uri="vm:EparkingLogger" />
+			<camel:choice>
+				<camel:when>
+					<camel:simple>${body.getBill().getBillId()} == null || ${body.getBill().getBillId()} == ""</camel:simple>
+					<camel:setHeader headerName="requestOriginal"><camel:simple>${body}</camel:simple></camel:setHeader>
+					<camel:throwException message="EparkingValidationException: Missing Bill.BillId in modifyBill Request" exceptionType="java.io.IOException" />
+				</camel:when>
+				<camel:when>
+					<camel:simple>${body.getBill().getPerson().getPersonId()} == null || ${body.getBill().getPerson().getPersonId()} == ""</camel:simple>
+					<camel:setHeader headerName="requestOriginal"><camel:simple>${body}</camel:simple></camel:setHeader>
+					<camel:throwException message="EparkingValidationException: Missing Bill.Person.PersonId in modifyBill Request" exceptionType="java.io.IOException" />
+				</camel:when>
+				<camel:otherwise>
+					<camel:setProperty propertyName="fileName">
+						<camel:method ref="Operator" method="getBillFileName(${body.getBill()})" />
+					</camel:setProperty>
+					<camel:bean ref="Operator" method="transformBill(${body.getBill()})" />
+					<camel:marshal><camel:csv delimiter=";"/></camel:marshal>
+					<camel:to uri="file:{{bill.file.location}}?fileName=${exchangeProperty.fileName}&amp;fileExist=Append" />
+					<camel:bean ref="Operator" method="modifyBillResponse()"/>
+				</camel:otherwise>
+			</camel:choice>
+			<camel:wireTap uri="vm:EparkingLogger" />
+		</camel:route>
+
+	</camel:camelContext>
+</beans>
+

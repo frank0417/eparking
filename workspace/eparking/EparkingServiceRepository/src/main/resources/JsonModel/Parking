@@ -1,0 +1,31 @@
+{
+  "properties": {
+    "parking_type": {
+      "type": "string"
+    },
+    "parking_time": {
+      "type": "string"
+    },
+    "parking_end": {
+      "type": "string"
+    },
+    "parking_price": {
+      "type": "string"
+    },
+    "province": {
+      "type": "string"
+    },
+    "postal_code": {
+      "type": "string"
+    },
+    "city": {
+      "type": "string"
+    },
+    "street": {
+      "type": "string"
+    },
+    "street_number": {
+      "type": "string"
+    }
+  }
+}

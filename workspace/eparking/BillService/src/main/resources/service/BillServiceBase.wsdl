@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+	xmlns:tns="http://eparking.pl/billservice" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="BillServiceBase"
+	targetNamespace="http://eparking.pl/billservice">
+	<wsdl:types>
+		<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+			<xsd:import namespace="http://eparking.pl/billservice"
+				schemaLocation="BillServiceBase.xsd">
+			</xsd:import>
+		</xsd:schema>
+	</wsdl:types>
+	<wsdl:message name="registerBillRequest">
+		<wsdl:part name="parameters" element="tns:registerBill"></wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="registerBillResponse">
+		<wsdl:part name="parameters" element="tns:registerBillResponse">
+		</wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="rechargeBillRequest">
+		<wsdl:part name="parameters" element="tns:rechargeBill"></wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="rechargeBillResponse">
+		<wsdl:part name="parameters"
+			element="tns:rechargeBillResponse">
+		</wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="addBillRequest">
+		<wsdl:part name="parameters" element="tns:addBill"></wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="addBillResponse">
+		<wsdl:part name="parameters" element="tns:addBillResponse"></wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="modifyBillRequest">
+		<wsdl:part name="parameters" element="tns:modifyBill"></wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="modifyBillResponse">
+		<wsdl:part name="parameters" element="tns:modifyBillResponse"></wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="getBillRequest">
+		<wsdl:part name="parameters" element="tns:getBill"></wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="getBillResponse">
+		<wsdl:part name="parameters" element="tns:getBillResponse"></wsdl:part>
+	</wsdl:message>
+	<wsdl:portType name="BillServiceBase">
+		<wsdl:operation name="registerBill">
+			<wsdl:input message="tns:registerBillRequest"></wsdl:input>
+			<wsdl:output message="tns:registerBillResponse"></wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="rechargeBill">
+			<wsdl:input message="tns:rechargeBillRequest"></wsdl:input>
+			<wsdl:output message="tns:rechargeBillResponse"></wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="addBill">
+			<wsdl:input message="tns:addBillRequest"></wsdl:input>
+			<wsdl:output message="tns:addBillResponse"></wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="modifyBill">
+			<wsdl:input message="tns:modifyBillRequest"></wsdl:input>
+			<wsdl:output message="tns:modifyBillResponse"></wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="getBill">
+			<wsdl:input message="tns:getBillRequest"></wsdl:input>
+			<wsdl:output message="tns:getBillResponse"></wsdl:output>
+		</wsdl:operation>
+	</wsdl:portType>
+	<wsdl:binding name="BillServiceBaseSOAP" type="tns:BillServiceBase">
+
+		<soap:binding style="document"
+			transport="http://schemas.xmlsoap.org/soap/http" />
+		<wsdl:operation name="registerBill">
+
+			<soap:operation soapAction="http://eparking.pl/billservice/registerBill" />
+			<wsdl:input>
+
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+
+				<soap:body use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="rechargeBill">
+
+			<soap:operation soapAction="http://eparking.pl/billservice/rechargeBill" />
+			<wsdl:input>
+
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+
+				<soap:body use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="addBill">
+			<soap:operation soapAction="http://eparking.pl/billservice/addBill" />
+			<wsdl:input>
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="modifyBill">
+			<soap:operation soapAction="http://eparking.pl/billservice/modifyBill" />
+			<wsdl:input>
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="getBill">
+			<soap:operation soapAction="http://eparking.pl/billservice/getBill" />
+			<wsdl:input>
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+	</wsdl:binding>
+	<wsdl:service name="BillServiceBase">
+		<wsdl:port binding="tns:BillServiceBaseSOAP" name="BillServiceBaseSOAP">
+			<soap:address location="http://www.example.org/" />
+		</wsdl:port>
+	</wsdl:service>
+</wsdl:definitions>

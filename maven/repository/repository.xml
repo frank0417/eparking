@@ -1,0 +1,34 @@
+<repository lastmodified='20170107110350.820'>
+  <resource id='camel-cxf-soap-route/7.0.0.M3' symbolicname='camel-cxf-soap-route' presentationname='Apache ServiceMix :: Examples :: Camel CXF SOAP :: Route' uri='org/apache/servicemix/examples/camel-cxf-soap-route/7.0.0.M3/camel-cxf-soap-route-7.0.0.M3.jar' version='7.0.0.M3'>
+    <size>6913</size>
+    <capability name='bundle'>
+      <p n='symbolicname' v='camel-cxf-soap-route'/>
+      <p n='presentationname' v='Apache ServiceMix :: Examples :: Camel CXF SOAP :: Route'/>
+      <p n='version' t='version' v='7.0.0.M3'/>
+      <p n='manifestversion' v='2'/>
+    </capability>
+    <require name='package' filter='(&amp;(package=javax.jws))' extend='false' multiple='false' optional='true'>Import package javax.jws;resolution:=optional</require>
+    <require name='package' filter='(&amp;(package=org.apache.camel)(version&gt;=2.16.0)(!(version&gt;=3.0.0)))' extend='false' multiple='false' optional='true'>Import package org.apache.camel;resolution:=optional;version="[2.16,3)"</require>
+    <require name='package' filter='(&amp;(package=org.apache.servicemix.examples.camel.soap.model)(version&gt;=7.0.0)(!(version&gt;=8.0.0)))' extend='false' multiple='false' optional='true'>Import package org.apache.servicemix.examples.camel.soap.model;resolution:=optional;version="[7.0,8)"</require>
+    <require name='package' filter='(&amp;(package=org.osgi.service.blueprint)(version&gt;=1.0.0)(!(version&gt;=2.0.0)))' extend='false' multiple='false' optional='true'>Import package org.osgi.service.blueprint;resolution:=optional;version="[1.0.0,2.0.0)"</require>
+  </resource>
+  <resource id='camel-cxf-soap-service/7.0.0.M3' symbolicname='camel-cxf-soap-service' presentationname='Apache ServiceMix :: Examples :: Camel CXF SOAP :: Service' uri='org/apache/servicemix/examples/camel-cxf-soap-service/7.0.0.M3/camel-cxf-soap-service-7.0.0.M3.jar' version='7.0.0.M3'>
+    <size>8209</size>
+    <capability name='bundle'>
+      <p n='symbolicname' v='camel-cxf-soap-service'/>
+      <p n='presentationname' v='Apache ServiceMix :: Examples :: Camel CXF SOAP :: Service'/>
+      <p n='version' t='version' v='7.0.0.M3'/>
+      <p n='manifestversion' v='2'/>
+    </capability>
+    <capability name='package'>
+      <p n='package' v='org.apache.servicemix.examples.camel.soap.model'/>
+      <p n='version' t='version' v='7.0.0'/>
+      <p n='uses:' v='javax.xml.bind.annotation,javax.xml.ws'/>
+    </capability>
+    <require name='package' filter='(&amp;(package=javax.xml.bind.annotation))' extend='false' multiple='false' optional='true'>Import package javax.xml.bind.annotation;resolution:=optional</require>
+    <require name='package' filter='(&amp;(package=javax.xml.ws))' extend='false' multiple='false' optional='true'>Import package javax.xml.ws;resolution:=optional</require>
+    <require name='package' filter='(&amp;(package=org.apache.camel)(version&gt;=2.16.0)(!(version&gt;=3.0.0)))' extend='false' multiple='false' optional='true'>Import package org.apache.camel;resolution:=optional;version="[2.16,3)"</require>
+    <require name='package' filter='(&amp;(package=org.apache.servicemix.examples.camel.soap.model))' extend='false' multiple='false' optional='true'>Import package org.apache.servicemix.examples.camel.soap.model;resolution:=optional</require>
+    <require name='package' filter='(&amp;(package=org.osgi.service.blueprint)(version&gt;=1.0.0)(!(version&gt;=2.0.0)))' extend='false' multiple='false' optional='true'>Import package org.osgi.service.blueprint;resolution:=optional;version="[1.0.0,2.0.0)"</require>
+  </resource>
+</repository>

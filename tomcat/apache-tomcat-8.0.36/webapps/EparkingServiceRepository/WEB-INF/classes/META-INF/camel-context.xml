@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:camel="http://camel.apache.org/schema/spring"
+	xmlns:cxf="http://camel.apache.org/schema/cxf"
+	xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
+       http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd">
+	
+	<!-- loggingFeatureEnabled="true" -->
+	
+	<cxf:cxfEndpoint 
+		id="ErrorHandlerService"
+		serviceClass="pl.eparking.errorhandlerservice.ErrorHandlerService"
+		address="/ErrorHandlerService"
+		serviceName="tns:ErrorHandlerService" 
+		endpointName="tns:ErrorHandlerServiceSOAP"
+		wsdlURL="classpath:ErrorHandlerService/ErrorHandlerService.wsdl" 
+		xmlns:tns="http://eparking.pl/errorhandlerservice">
+		<cxf:properties>
+			<entry key="dataFormat" value="PAYLOAD" />
+		</cxf:properties>
+	</cxf:cxfEndpoint>
+	
+	<cxf:cxfEndpoint 
+		id="AccountService"
+		serviceClass="pl.eparking.accountservice.AccountServiceBase"
+		address="/AccountService"
+		serviceName="tns:AccountServiceBase" 
+		endpointName="tns:AccountServiceBaseSOAP"
+		wsdlURL="classpath:AccountService/AccountServiceBase.wsdl" 
+		xmlns:tns="http://eparking.pl/accountservice">
+		<cxf:properties>
+			<entry key="dataFormat" value="PAYLOAD" />
+		</cxf:properties>
+	</cxf:cxfEndpoint>
+
+	<cxf:cxfEndpoint 
+		id="BillService"
+		serviceClass="pl.eparking.billservice.BillServiceBase"
+		address="/BillService"
+		serviceName="tns:BillServiceBase" 
+		endpointName="tns:BillServiceBaseSOAP"
+		wsdlURL="classpath:BillService/BillServiceBase.wsdl" 
+		xmlns:tns="http://eparking.pl/billservice">
+		<cxf:properties>
+			<entry key="dataFormat" value="PAYLOAD" />
+		</cxf:properties>
+	</cxf:cxfEndpoint>
+	
+	<cxf:cxfEndpoint 
+		id="ControlService"
+		serviceClass="pl.eparking.controlservice.ControlServiceBase"
+		address="/ControlService"
+		serviceName="tns:ControlServiceBase" 
+		endpointName="tns:ControlServiceBaseSOAP"
+		wsdlURL="classpath:ControlService/ControlServiceBase.wsdl" 
+		xmlns:tns="http://eparking.pl/controlservice">
+		<cxf:properties>
+			<entry key="dataFormat" value="PAYLOAD" />
+		</cxf:properties>
+	</cxf:cxfEndpoint>
+	
+	<cxf:cxfEndpoint 
+		id="ParkingService"
+		serviceClass="pl.eparking.parkingservice.ParkingServiceBase"
+		address="/ParkingService"
+		serviceName="tns:ParkingServiceBase" 
+		endpointName="tns:ParkingServiceBaseSOAP"
+		wsdlURL="classpath:ParkingService/ParkingServiceBase.wsdl" 
+		xmlns:tns="http://eparking.pl/parkingservice">
+		<cxf:properties>
+			<entry key="dataFormat" value="PAYLOAD" />
+		</cxf:properties>
+	</cxf:cxfEndpoint>
+	
+	<cxf:cxfEndpoint 
+		id="PersonService"
+		serviceClass="pl.eparking.personservice.PersonServiceBase"
+		address="/PersonService"
+		serviceName="tns:PersonServiceBase" 
+		endpointName="tns:PersonServiceBaseSOAP"
+		wsdlURL="classpath:PersonService/PersonServiceBase.wsdl" 
+		xmlns:tns="http://eparking.pl/personservice">
+		<cxf:properties>
+			<entry key="dataFormat" value="PAYLOAD" />
+		</cxf:properties>
+	</cxf:cxfEndpoint>
+	
+	<camel:camelContext>
+		
+		<camel:dataFormats>
+			<camel:jaxb id="AccountServiceDF" contextPath="pl.eparking.accountservice" prettyPrint="true" />
+			<camel:jaxb id="BillServiceDF" contextPath="pl.eparking.billservice" prettyPrint="true" />
+			<camel:jaxb id="ControlServiceDF" contextPath="pl.eparking.controlservice" prettyPrint="true" />
+			<camel:jaxb id="ErrorHandlerServiceDF" contextPath="pl.eparking.errorhandlerservice" prettyPrint="true" />
+			<camel:jaxb id="ParkingServiceDF" contextPath="pl.eparking.parkingservice" prettyPrint="true" />
+			<camel:jaxb id="PersonServiceDF" contextPath="pl.eparking.personservice" prettyPrint="true" />
+		</camel:dataFormats>
+		
+		<camel:onException>
+			<camel:exception>java.lang.Exception</camel:exception>
+			<camel:handled><camel:constant>true</camel:constant></camel:handled>
+			<camel:log message="EparkingServiceRepositoryErrorHandler" />
+			<camel:to uri="vm:ErrorHandlerAdapter" />
+		</camel:onException>
+		
+		<camel:route id="eparkingLogger">
+			<camel:from uri="vm:EparkingLogger" />
+			<camel:choice>
+				<camel:when>
+					<camel:simple>${headers.workerClass} contains "accountservice"</camel:simple>
+					<camel:marshal ref="AccountServiceDF" />
+				</camel:when>
+				<camel:when>
+					<camel:simple>${headers.workerClass} contains "billservice"</camel:simple>
+					<camel:marshal ref="BillServiceDF" />
+				</camel:when>
+				<camel:when>
+					<camel:simple>${headers.workerClass} contains "controlservice"</camel:simple>
+					<camel:marshal ref="ControlServiceDF" />
+				</camel:when>
+				<camel:when>
+					<camel:simple>${headers.workerClass} contains "parkingservice"</camel:simple>
+					<camel:marshal ref="ParkingServiceDF" />
+				</camel:when>
+				<camel:when>
+					<camel:simple>${headers.workerClass} contains "personservice"</camel:simple>
+					<camel:marshal ref="PersonServiceDF" />
+				</camel:when>
+				<camel:when>
+					<camel:simple>${headers.workerClass} contains "errorhandlerservice"</camel:simple>
+					<camel:marshal ref="ErrorHandlerServiceDF" />
+				</camel:when>
+			</camel:choice>
+			<camel:log message="EparkingLogger: ${body}" loggingLevel="INFO" logName="EparkingLogger" />
+		</camel:route>
+		
+		<camel:route>
+			<camel:from ref="ErrorHandlerService" />
+			<camel:marshal ref="ErrorHandlerServiceDF" />
+			<camel:unmarshal ref="ErrorHandlerServiceDF" />
+			<camel:setHeader headerName="masterClass"><camel:simple>${body.getClass().getName()}</camel:simple></camel:setHeader>
+			<camel:choice>
+				<camel:when>
+					<camel:simple>${header.operationName} == "handleError"</camel:simple>
+					<camel:to uri="vm:ErrorHandlerAdapter" />
+				</camel:when>
+			</camel:choice>
+			<camel:marshal ref="ErrorHandlerServiceDF" />
+		</camel:route>
+	
+		<camel:route id="AccountServiceRepository">
+			<camel:from ref="AccountService" />
+			<camel:marshal ref="AccountServiceDF" />
+			<camel:unmarshal ref="AccountServiceDF" />
+			<camel:setHeader headerName="masterClass"><camel:simple>${body.getClass().getName()}</camel:simple></camel:setHeader>
+			<camel:setHeader headerName="requestOriginal"><camel:simple>${body}</camel:simple></camel:setHeader>
+			<camel:choice>
+				<camel:when>
+					<camel:simple>${header.operationName} == "findAccount"</camel:simple>
+					<camel:to uri="vm:AccountServiceConnectorFindAccount" />
+				</camel:when>
+				<camel:when>
+					<camel:simple>${header.operationName} == "getAccount"</camel:simple>
+					<camel:to uri="vm:AccountServiceConnectorGetAccount" />
+				</camel:when>
+				<camel:when>
+					<camel:simple>${header.operationName} == "addAccount"</camel:simple>
+					<camel:to uri="vm:AccountServiceConnectorAddAccount" />
+				</camel:when>
+				<camel:when>
+					<camel:simple>${header.operationName} == "registerAccount"</camel:simple>
+					<camel:to uri="vm:AccountServiceBaseRegisterAccount" />
+				</camel:when>
+			</camel:choice>
+			<camel:marshal ref="AccountServiceDF" />
+		</camel:route>
+
+		<camel:route>
+			<camel:from ref="BillService" />
+			<camel:marshal ref="BillServiceDF" />
+			<camel:unmarshal ref="BillServiceDF" />
+			<camel:setHeader headerName="masterClass"><camel:simple>${body.getClass().getName()}</camel:simple></camel:setHeader>
+			<camel:setHeader headerName="requestOriginal"><camel:simple>${body}</camel:simple></camel:setHeader>
+			<camel:choice>
+				<camel:when>
+					<camel:simple>${header.operationName} == "registerBill"</camel:simple>
+					<camel:to uri="vm:BillServiceBaseRegisterBill" />
+				</camel:when>
+				<camel:when>
+					<camel:simple>${header.operationName} == "rechargeBill"</camel:simple>
+					<camel:to uri="vm:BillServiceBaseRechargeBill" />
+				</camel:when>
+				<camel:when>
+					<camel:simple>${header.operationName} == "addBill"</camel:simple>
+					<camel:to uri="vm:BillServiceConnectorAddBill" />
+				</camel:when>
+				<camel:when>
+					<camel:simple>${header.operationName} == "modifyBill"</camel:simple>
+					<camel:to uri="vm:BillServiceConnectorModifyBill" />
+				</camel:when>
+				<camel:when>
+					<camel:simple>${header.operationName} == "getBill"</camel:simple>
+					<camel:to uri="vm:BillServiceConnectorGetBill" />
+				</camel:when>				
+			</camel:choice>
+			<camel:marshal ref="BillServiceDF" />
+		</camel:route>
+		
+		<camel:route>
+			<camel:from ref="ControlService" />
+			<camel:marshal ref="ControlServiceDF" />
+			<camel:unmarshal ref="ControlServiceDF" />
+			<camel:setHeader headerName="masterClass"><camel:simple>${body.getClass().getName()}</camel:simple></camel:setHeader>
+			<camel:setHeader headerName="requestOriginal"><camel:simple>${body}</camel:simple></camel:setHeader>
+			<camel:choice>
+				<camel:when>
+					<camel:simple>${header.operationName} == "controlParking"</camel:simple>
+					<camel:to uri="vm:ControlServiceBaseControlParking" />
+				</camel:when>			
+			</camel:choice>
+			<camel:marshal ref="ControlServiceDF" />
+		</camel:route>
+
+		<camel:route>
+			<camel:from ref="ParkingService" />
+			<camel:marshal ref="ParkingServiceDF" />
+			<camel:unmarshal ref="ParkingServiceDF" />
+			<camel:setHeader headerName="masterClass"><camel:simple>${body.getClass().getName()}</camel:simple></camel:setHeader>
+			<camel:setHeader headerName="requestOriginal"><camel:simple>${body}</camel:simple></camel:setHeader>
+			<camel:choice>
+				<camel:when>
+					<camel:simple>${header.operationName} == "addParking"</camel:simple>
+					<camel:to uri="vm:ParkingServiceConnectorAddParking" />
+				</camel:when>
+				<camel:when>
+					<camel:simple>${header.operationName} == "saveParking"</camel:simple>
+					<camel:to uri="vm:ParkingServiceConnectorSaveParking" />
+				</camel:when>
+				<camel:when>
+					<camel:simple>${header.operationName} == "getParking"</camel:simple>
+					<camel:to uri="vm:ParkingServiceConnectorGetParking" />
+				</camel:when>
+				<camel:when>
+					<camel:simple>${header.operationName} == "updateParking"</camel:simple>
+					<camel:to uri="vm:ParkingServiceConnectorUpdateParking" />
+				</camel:when>
+				<camel:when>
+					<camel:simple>${header.operationName} == "modifyParking"</camel:simple>
+					<camel:to uri="vm:ParkingServiceConnectorModifyParking" />
+				</camel:when>
+				<camel:when>
+					<camel:simple>${header.operationName} == "addControl"</camel:simple>
+					<camel:to uri="vm:ParkingServiceConnectorAddControl" />
+				</camel:when>
+				<camel:when>
+					<camel:simple>${header.operationName} == "addFine"</camel:simple>					
+					<camel:to uri="vm:ParkingServiceConnectorAddFine" />
+				</camel:when>
+				<camel:when>
+					<camel:simple>${header.operationName} == "notifyParking"</camel:simple>
+					<camel:to uri="vm:ParkingServiceConnectorNotifyParking" />
+				</camel:when>
+				<camel:when>
+					<camel:simple>${header.operationName} == "startParking"</camel:simple>
+					<camel:to uri="vm:ParkingServiceBaseStartParking" />
+				</camel:when>
+				<camel:when>
+					<camel:simple>${header.operationName} == "endParking"</camel:simple>
+					<camel:to uri="vm:ParkingServiceBaseEndParking" />
+				</camel:when>
+			</camel:choice>
+			<camel:marshal ref="ParkingServiceDF" />
+		</camel:route>
+		
+		<camel:route>
+			<camel:from ref="PersonService" />
+			<camel:marshal ref="PersonServiceDF" />
+			<camel:unmarshal ref="PersonServiceDF" />
+			<camel:setHeader headerName="masterClass"><camel:simple>${body.getClass().getName()}</camel:simple></camel:setHeader>
+			<camel:setHeader headerName="requestOriginal"><camel:simple>${body}</camel:simple></camel:setHeader>
+			<camel:log message="masterClass:  ${headers.masterClass}"></camel:log>
+			<camel:choice>
+				<camel:when>
+					<camel:simple>${header.operationName} == "addPerson"</camel:simple>
+					<camel:to uri="vm:PersonServiceConnectorAddPerson" />
+				</camel:when>
+			</camel:choice>
+			<camel:marshal ref="PersonServiceDF" />
+		</camel:route>
+		
+	</camel:camelContext>
+
+</beans>
+

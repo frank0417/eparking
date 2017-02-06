@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://eparking.pl/parkingservice"
+	xmlns:tns="http://eparking.pl/parkingservice" elementFormDefault="qualified"
+	xmlns:Q1="http://eparking.pl/base" xmlns:Q2="http://eparking.pl/technical">
+
+	<import schemaLocation="../cdm/BaseModel.xsd" namespace="http://eparking.pl/base"></import>
+	<import schemaLocation="../cdm/TechnicalModel.xsd" namespace="http://eparking.pl/technical"></import>
+
+	<element name="addParking" type="tns:addParking">
+	</element>
+	<element name="addParkingResponse" type="tns:addParkingResponse">
+	</element>
+	<element name="endParking" type="tns:endParking">
+	</element>
+	<element name="endParkingResponse" type="tns:endParkingResponse">
+	</element>
+	<element name="modifyParking" type="tns:modifyParking">
+	</element>
+	<element name="modifyParkingResponse" type="tns:modifyParkingResponse">
+	</element>
+	<element name="startParking" type="tns:startParking">
+	</element>
+	<element name="startParkingResponse" type="tns:startParkingResponse">
+	</element>
+	<element name="addControl" type="tns:addControl">
+	</element>
+	<element name="addControlResponse" type="tns:addControlResponse">
+	</element>
+	<element name="addFine" type="tns:addFine">
+	</element>
+	<element name="addFineResponse" type="tns:addFineResponse">
+	</element>
+	<element name="saveParking" type="tns:saveParking">
+	</element>
+	<element name="saveParkingResponse" type="tns:saveParkingResponse">
+	</element>
+	<element name="getParking" type="tns:getParking">
+	</element>
+	<element name="getParkingResponse" type="tns:getParkingResponse">
+	</element>
+	<element name="updateParking" type="tns:updateParking">
+	</element>
+	<element name="updateParkingResponse" type="tns:updateParkingResponse">
+	</element>
+	<element name="notifyParking" type="tns:notifyParking">
+	</element>
+
+
+	<complexType name="addControl">
+		<complexContent>
+			<extension base="Q2:BaseRequest">
+				<sequence>
+					<element ref="Q1:Control"></element>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+
+	<complexType name="addControlResponse">
+		<complexContent>
+			<extension base="Q2:BaseResponse">
+				<sequence>
+					<element ref="Q1:Control" minOccurs="0"></element>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+
+	<complexType name="addFine">
+		<complexContent>
+			<extension base="Q2:BaseRequest">
+				<sequence>
+					<element ref="Q1:Fine"></element>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+
+	<complexType name="addFineResponse">
+		<complexContent>
+			<extension base="Q2:BaseResponse">
+				<sequence>
+					<element ref="Q1:Fine" minOccurs="0"></element>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+
+	<complexType name="addParking">
+		<complexContent>
+			<extension base="Q2:BaseRequest">
+				<sequence>
+					<element ref="Q1:Account"></element>
+					<element ref="Q1:Parking"></element>
+					<element ref="Q1:Bill"></element>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+
+	<complexType name="addParkingResponse">
+		<complexContent>
+			<extension base="Q2:BaseResponse">
+				<sequence>
+					<element ref="Q1:Parking" minOccurs="0"></element>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+
+	<complexType name="getParking">
+		<complexContent>
+			<extension base="Q2:BaseRequest">
+                <choice>
+					<element ref="Q1:Parking"></element>
+					<element ref="Q1:Account"></element>
+				</choice>
+			</extension>
+		</complexContent>
+	</complexType>
+
+	<complexType name="getParkingResponse">
+		<complexContent>
+			<extension base="Q2:BaseResponse">
+				<sequence>
+					<element ref="Q1:Parking" minOccurs="0"></element>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+
+	<complexType name="modifyParking">
+		<complexContent>
+			<extension base="Q2:BaseRequest">
+				<sequence>
+					<element ref="Q1:Parking"></element>
+					<element ref="Q1:Account"></element>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+
+	<complexType name="modifyParkingResponse">
+		<complexContent>
+			<extension base="Q2:BaseResponse"></extension>
+		</complexContent>
+	</complexType>
+
+	<complexType name="saveParking">
+		<complexContent>
+			<extension base="Q2:BaseRequest">
+				<sequence>
+					<element ref="Q1:Account"></element>
+					<element ref="Q1:Parking"></element>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+
+	<complexType name="saveParkingResponse">
+		<complexContent>
+			<extension base="Q2:BaseResponse"></extension>
+		</complexContent>
+	</complexType>
+
+	<complexType name="startParking">
+		<complexContent>
+			<extension base="Q2:BaseRequest">
+				<sequence>
+					<element ref="Q1:Parking"></element>
+					<element ref="Q1:Account"></element>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+
+	<complexType name="startParkingResponse">
+		<complexContent>
+			<extension base="Q2:BaseResponse"></extension>
+		</complexContent>
+	</complexType>
+
+	<complexType name="updateParking">
+		<complexContent>
+			<extension base="Q2:BaseRequest">
+				<sequence>
+					<element ref="Q1:Parking"></element>
+					<element ref="Q1:Account"></element>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+
+	<complexType name="updateParkingResponse">
+		<complexContent>
+			<extension base="Q2:BaseResponse"></extension>
+		</complexContent>
+	</complexType>
+
+	<complexType name="endParking">
+		<complexContent>
+			<extension base="Q2:BaseRequest">
+				<sequence>
+					<element ref="Q1:Account"></element>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+
+	<complexType name="endParkingResponse">
+		<complexContent>
+			<extension base="Q2:BaseResponse"></extension>
+		</complexContent>
+	</complexType>
+
+	<complexType name="notifyParking">
+		<complexContent>
+			<extension base="Q2:BaseRequest">
+				<sequence>
+					<element ref="Q1:Parking"></element>
+					<element ref="Q1:Account"></element>
+					<element name="ParkingAction" type="tns:ParkingAction"></element>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+
+	<simpleType name="ParkingAction">
+		<restriction base="string">
+			<enumeration value="parking_start"></enumeration>
+			<enumeration value="parking_end"></enumeration>
+		</restriction>
+	</simpleType>
+</schema>

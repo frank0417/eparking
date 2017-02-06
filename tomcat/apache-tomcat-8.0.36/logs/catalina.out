@@ -1,0 +1,75 @@
+05-Feb-2017 15:00:41.690 INFO [localhost-startStop-1] org.restlet.ext.httpclient.HttpClientHelper.start Starting the Apache HTTP client
+05-Feb-2017 15:06:35.325 INFO [http-apr-8080-exec-11] org.restlet.ext.httpclient.HttpClientHelper.stop Stopping the HTTP client
+05-Feb-2017 15:06:39.278 INFO [http-apr-8080-exec-11] org.restlet.ext.httpclient.HttpClientHelper.start Starting the Apache HTTP client
+34497  eparkingPU  INFO   [Camel (camel-27) thread #142 - vm://PersonServiceConnectorAddPerson] openjpa.Runtime - Starting OpenJPA 2.4.1
+34545  eparkingPU  INFO   [Camel (camel-27) thread #142 - vm://PersonServiceConnectorAddPerson] openjpa.jdbc.JDBC - Using dictionary class "org.apache.openjpa.jdbc.sql.MySQLDictionary".
+34850  eparkingPU  INFO   [Camel (camel-27) thread #142 - vm://PersonServiceConnectorAddPerson] openjpa.jdbc.JDBC - Connected to MySQL version 5.5 using JDBC driver MySQL Connector Java version mysql-connector-java-5.1.39 ( Revision: 3289a357af6d09ecc1a10fd3c26e95183e5790ad ). 
+75970  eparkingPU  INFO   [Camel (camel-15) thread #72 - vm://AccountServiceConnectorAddAccount] openjpa.Runtime - Starting OpenJPA 2.4.1
+76029  eparkingPU  INFO   [Camel (camel-15) thread #72 - vm://AccountServiceConnectorAddAccount] openjpa.jdbc.JDBC - Using dictionary class "org.apache.openjpa.jdbc.sql.MySQLDictionary".
+76089  eparkingPU  INFO   [Camel (camel-15) thread #72 - vm://AccountServiceConnectorAddAccount] openjpa.jdbc.JDBC - Connected to MySQL version 5.5 using JDBC driver MySQL Connector Java version mysql-connector-java-5.1.39 ( Revision: 3289a357af6d09ecc1a10fd3c26e95183e5790ad ). 
+78532  eparkingPU  INFO   [Camel (camel-15) thread #73 - vm://AccountServiceConnectorGetAccount] openjpa.Runtime - Starting OpenJPA 2.4.1
+78556  eparkingPU  INFO   [Camel (camel-15) thread #73 - vm://AccountServiceConnectorGetAccount] openjpa.jdbc.JDBC - Using dictionary class "org.apache.openjpa.jdbc.sql.MySQLDictionary" (MySQL 5.7.17-0ubuntu0.16.04.1 ,MySQL Connector Java mysql-connector-java-5.1.39 ( Revision: 3289a357af6d09ecc1a10fd3c26e95183e5790ad )).
+78566  eparkingPU  INFO   [Camel (camel-15) thread #73 - vm://AccountServiceConnectorGetAccount] openjpa.jdbc.JDBC - Connected to MySQL version 5.5 using JDBC driver MySQL Connector Java version mysql-connector-java-5.1.39 ( Revision: 3289a357af6d09ecc1a10fd3c26e95183e5790ad ). 
+43034  eparkingPU  INFO   [Camel (camel-25) thread #140 - vm://ParkingServiceConnectorGetParking] openjpa.Runtime - Starting OpenJPA 2.4.1
+43242  eparkingPU  INFO   [Camel (camel-25) thread #140 - vm://ParkingServiceConnectorGetParking] openjpa.jdbc.JDBC - Using dictionary class "org.apache.openjpa.jdbc.sql.MySQLDictionary" (MySQL 5.7.17-0ubuntu0.16.04.1 ,MySQL Connector Java mysql-connector-java-5.1.39 ( Revision: 3289a357af6d09ecc1a10fd3c26e95183e5790ad )).
+43272  eparkingPU  INFO   [Camel (camel-25) thread #140 - vm://ParkingServiceConnectorGetParking] openjpa.jdbc.JDBC - Connected to MySQL version 5.5 using JDBC driver MySQL Connector Java version mysql-connector-java-5.1.39 ( Revision: 3289a357af6d09ecc1a10fd3c26e95183e5790ad ). 
+45589  eparkingPU  INFO   [Camel (camel-25) thread #138 - vm://ParkingServiceConnectorSaveParking] openjpa.Runtime - Starting OpenJPA 2.4.1
+45590  eparkingPU  INFO   [Camel (camel-25) thread #138 - vm://ParkingServiceConnectorSaveParking] openjpa.jdbc.JDBC - Using dictionary class "org.apache.openjpa.jdbc.sql.MySQLDictionary".
+45641  eparkingPU  INFO   [Camel (camel-25) thread #138 - vm://ParkingServiceConnectorSaveParking] openjpa.jdbc.JDBC - Connected to MySQL version 5.5 using JDBC driver MySQL Connector Java version mysql-connector-java-5.1.39 ( Revision: 3289a357af6d09ecc1a10fd3c26e95183e5790ad ). 
+Profiler Agent: Waiting for connection on port 5140 (Protocol version: 15)
+Profiler Agent: Established connection with the tool
+Profiler Agent: Local accelerated session
+Profiler Agent Warning: JVMTI classLoadHook: class name is null.
+Profiler Agent Warning: JVMTI classLoadHook: class name is null.
+Profiler Agent Warning: JVMTI classLoadHook: class name is null.
+Profiler Agent Warning: JVMTI classLoadHook: class name is null.
+Profiler Agent Warning: JVMTI classLoadHook: class name is null.
+Profiler Agent Warning: JVMTI classLoadHook: class name is null.
+Profiler Agent Warning: JVMTI classLoadHook: class name is null.
+Profiler Agent Warning: JVMTI classLoadHook: class name is null.
+Profiler Agent Warning: JVMTI classLoadHook: class name is null.
+Profiler Agent Warning: JVMTI classLoadHook: class name is null.
+Profiler Agent Warning: JVMTI classLoadHook: class name is null.
+Profiler Agent Warning: Retransform failed with status 62
+Profiler Agent: Connection with agent closed
+05-Feb-2017 21:09:27.776 INFO [localhost-startStop-2] org.restlet.ext.httpclient.HttpClientHelper.stop Stopping the HTTP client
+Profiler Agent: JNI OnLoad Initializing...
+Profiler Agent: JNI OnLoad Initialized successfully
+Profiler Agent: 250 classes cached.
+Profiler Agent: 250 classes cached.
+Profiler Agent: 250 classes cached.
+Profiler Agent: 250 classes cached.
+Profiler Agent: 250 classes cached.
+Profiler Agent: 250 classes cached.
+Profiler Agent: 250 classes cached.
+Profiler Agent: 250 classes cached.
+Profiler Agent: 250 classes cached.
+Profiler Agent: 250 classes cached.
+Profiler Agent: 250 classes cached.
+Profiler Agent: 250 classes cached.
+Profiler Agent: 250 classes cached.
+05-Feb-2017 21:12:26.238 INFO [localhost-startStop-1] org.restlet.ext.httpclient.HttpClientHelper.start Starting the Apache HTTP client
+05-Feb-2017 21:14:55.912 INFO [localhost-startStop-1] org.restlet.ext.httpclient.HttpClientHelper.start Starting the Apache HTTP client
+05-Feb-2017 21:15:26.165 INFO [localhost-startStop-1] org.restlet.ext.httpclient.HttpClientHelper.stop Stopping the HTTP client
+05-Feb-2017 21:19:04.928 INFO [localhost-startStop-1] org.restlet.ext.httpclient.HttpClientHelper.start Starting the Apache HTTP client
+05-Feb-2017 21:20:04.158 INFO [localhost-startStop-2] org.restlet.ext.httpclient.HttpClientHelper.stop Stopping the HTTP client
+05-Feb-2017 21:20:32.811 INFO [localhost-startStop-1] org.restlet.ext.httpclient.HttpClientHelper.start Starting the Apache HTTP client
+05-Feb-2017 21:22:17.390 INFO [localhost-startStop-2] org.restlet.ext.httpclient.HttpClientHelper.stop Stopping the HTTP client
+06-Feb-2017 20:43:03.206 INFO [localhost-startStop-1] org.restlet.ext.httpclient.HttpClientHelper.start Starting the Apache HTTP client
+06-Feb-2017 20:44:24.589 INFO [http-apr-8080-exec-2] org.restlet.ext.httpclient.HttpClientHelper.stop Stopping the HTTP client
+06-Feb-2017 20:44:28.519 INFO [http-apr-8080-exec-2] org.restlet.ext.httpclient.HttpClientHelper.start Starting the Apache HTTP client
+29911  eparkingPU  INFO   [Camel (camel-27) thread #140 - vm://PersonServiceConnectorAddPerson] openjpa.Runtime - Starting OpenJPA 2.4.1
+29980  eparkingPU  INFO   [Camel (camel-27) thread #140 - vm://PersonServiceConnectorAddPerson] openjpa.jdbc.JDBC - Using dictionary class "org.apache.openjpa.jdbc.sql.MySQLDictionary".
+30267  eparkingPU  INFO   [Camel (camel-27) thread #140 - vm://PersonServiceConnectorAddPerson] openjpa.jdbc.JDBC - Connected to MySQL version 5.5 using JDBC driver MySQL Connector Java version mysql-connector-java-5.1.39 ( Revision: 3289a357af6d09ecc1a10fd3c26e95183e5790ad ). 
+68274  eparkingPU  INFO   [Camel (camel-15) thread #70 - vm://AccountServiceConnectorAddAccount] openjpa.Runtime - Starting OpenJPA 2.4.1
+68343  eparkingPU  INFO   [Camel (camel-15) thread #70 - vm://AccountServiceConnectorAddAccount] openjpa.jdbc.JDBC - Using dictionary class "org.apache.openjpa.jdbc.sql.MySQLDictionary".
+68409  eparkingPU  INFO   [Camel (camel-15) thread #70 - vm://AccountServiceConnectorAddAccount] openjpa.jdbc.JDBC - Connected to MySQL version 5.5 using JDBC driver MySQL Connector Java version mysql-connector-java-5.1.39 ( Revision: 3289a357af6d09ecc1a10fd3c26e95183e5790ad ). 
+70448  eparkingPU  INFO   [Camel (camel-15) thread #71 - vm://AccountServiceConnectorGetAccount] openjpa.Runtime - Starting OpenJPA 2.4.1
+70524  eparkingPU  INFO   [Camel (camel-15) thread #71 - vm://AccountServiceConnectorGetAccount] openjpa.jdbc.JDBC - Using dictionary class "org.apache.openjpa.jdbc.sql.MySQLDictionary" (MySQL 5.7.17-0ubuntu0.16.04.1 ,MySQL Connector Java mysql-connector-java-5.1.39 ( Revision: 3289a357af6d09ecc1a10fd3c26e95183e5790ad )).
+70529  eparkingPU  INFO   [Camel (camel-15) thread #71 - vm://AccountServiceConnectorGetAccount] openjpa.jdbc.JDBC - Connected to MySQL version 5.5 using JDBC driver MySQL Connector Java version mysql-connector-java-5.1.39 ( Revision: 3289a357af6d09ecc1a10fd3c26e95183e5790ad ). 
+38430  eparkingPU  INFO   [Camel (camel-25) thread #138 - vm://ParkingServiceConnectorGetParking] openjpa.Runtime - Starting OpenJPA 2.4.1
+38590  eparkingPU  INFO   [Camel (camel-25) thread #138 - vm://ParkingServiceConnectorGetParking] openjpa.jdbc.JDBC - Using dictionary class "org.apache.openjpa.jdbc.sql.MySQLDictionary" (MySQL 5.7.17-0ubuntu0.16.04.1 ,MySQL Connector Java mysql-connector-java-5.1.39 ( Revision: 3289a357af6d09ecc1a10fd3c26e95183e5790ad )).
+38600  eparkingPU  INFO   [Camel (camel-25) thread #138 - vm://ParkingServiceConnectorGetParking] openjpa.jdbc.JDBC - Connected to MySQL version 5.5 using JDBC driver MySQL Connector Java version mysql-connector-java-5.1.39 ( Revision: 3289a357af6d09ecc1a10fd3c26e95183e5790ad ). 
+185384  eparkingPU  INFO   [Camel (camel-25) thread #136 - vm://ParkingServiceConnectorSaveParking] openjpa.Runtime - Starting OpenJPA 2.4.1
+185385  eparkingPU  INFO   [Camel (camel-25) thread #136 - vm://ParkingServiceConnectorSaveParking] openjpa.jdbc.JDBC - Using dictionary class "org.apache.openjpa.jdbc.sql.MySQLDictionary".
+185412  eparkingPU  INFO   [Camel (camel-25) thread #136 - vm://ParkingServiceConnectorSaveParking] openjpa.jdbc.JDBC - Connected to MySQL version 5.5 using JDBC driver MySQL Connector Java version mysql-connector-java-5.1.39 ( Revision: 3289a357af6d09ecc1a10fd3c26e95183e5790ad ). 

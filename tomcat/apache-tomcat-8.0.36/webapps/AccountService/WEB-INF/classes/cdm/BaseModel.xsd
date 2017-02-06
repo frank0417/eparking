@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema targetNamespace="http://eparking.pl/base"
+	elementFormDefault="qualified" xmlns="http://www.w3.org/2001/XMLSchema"
+	xmlns:tns="http://eparking.pl/base">
+	<complexType name="Bill">
+		<sequence>
+			<element name="BillId" type="string" minOccurs="0" maxOccurs="1">
+			</element>
+			<element name="BankNumber" type="string" minOccurs="0"
+				maxOccurs="1">
+			</element>
+			<element name="Balance" type="double" minOccurs="0"
+				maxOccurs="1">
+			</element>
+			<element ref="tns:Person" minOccurs="0" maxOccurs="1"></element>
+
+			<element name="Operation" minOccurs="0" maxOccurs="1">
+				<simpleType>
+					<restriction base="string">
+						<enumeration value="start_parking_charge"></enumeration>
+						<enumeration value="end_parking_charge"></enumeration>
+						<enumeration value="fine_charge"></enumeration>
+						<enumeration value="bill_recharge"></enumeration>
+						<enumeration value="bill_register"></enumeration>
+						<enumeration value="cancel_parking_charge"></enumeration>
+					</restriction>
+				</simpleType>
+			</element>
+		</sequence>
+	</complexType>
+	<complexType name="Person">
+		<sequence>
+			<element name="PersonId" type="string" minOccurs="0"
+				maxOccurs="1"></element>
+			<element name="FirstName" type="string" minOccurs="0"
+				maxOccurs="1"></element>
+			<element name="LastName" type="string" minOccurs="0"
+				maxOccurs="1"></element>
+			<element name="Pesel" type="string" minOccurs="0" maxOccurs="1"></element>
+			<element name="Email" type="string" minOccurs="0" maxOccurs="1"></element>
+			<element ref="tns:Address" minOccurs="0" maxOccurs="1"></element>
+		</sequence>
+	</complexType>
+	<complexType name="Controller">
+		<sequence>
+			<element name="ControllerId" type="string" minOccurs="1"
+				maxOccurs="1">
+			</element>
+			<element ref="tns:Person" minOccurs="0" maxOccurs="1"></element>
+		</sequence>
+	</complexType>
+	<complexType name="Control">
+		<sequence>
+			<element name="ControlId" type="string" minOccurs="0"
+				maxOccurs="1">
+			</element>
+			<element name="ControlDate" type="dateTime" minOccurs="0"
+				maxOccurs="1">
+			</element>
+			<element ref="tns:Controller" minOccurs="0" maxOccurs="1"></element>
+			<element ref="tns:Address" minOccurs="0" maxOccurs="1"></element>
+			<element ref="tns:Vehicle" minOccurs="0" maxOccurs="1"></element>
+		</sequence>
+	</complexType>
+	<complexType name="Address">
+		<sequence>
+			<element name="AddressId" type="string" minOccurs="0"
+				maxOccurs="1"></element>
+			<element name="PostalCode" type="string" minOccurs="0"
+				maxOccurs="1">
+			</element>
+			<element name="City" type="string" minOccurs="0" maxOccurs="1">
+			</element>
+			<element name="Province" type="string" minOccurs="0"
+				maxOccurs="1">
+			</element>
+			<element name="Street" type="string" minOccurs="0" maxOccurs="1">
+			</element>
+			<element name="StreetNumber" type="string" minOccurs="0"
+				maxOccurs="1">
+			</element>
+			<element name="FlatNumber" type="string" minOccurs="0"
+				maxOccurs="1">
+			</element>
+			<element ref="tns:AddressType" minOccurs="0" maxOccurs="1">
+			</element>
+		</sequence>
+	</complexType>
+	<complexType name="Parking">
+		<sequence>
+			<element name="ParkingId" type="string" minOccurs="0"
+				maxOccurs="1">
+			</element>
+			<element name="VehicleId" type="string" minOccurs="0"
+				maxOccurs="1">
+			</element>
+			<element name="ParkingStart" type="dateTime" minOccurs="0"
+				maxOccurs="1">
+			</element>
+			<element name="ParkingEnd" type="dateTime" minOccurs="0"
+				maxOccurs="1">
+			</element>
+			<element ref="tns:ParkingType" minOccurs="0" maxOccurs="1">
+			</element>
+			<element ref="tns:Address" minOccurs="0" maxOccurs="1"></element>
+			<element name="ParkingTime" type="double" minOccurs="0"
+				maxOccurs="1">
+			</element>
+			<element name="ParkingPrice" type="double" minOccurs="0"
+				maxOccurs="1">
+			</element>
+			<element name="ParkingStatus" minOccurs="0" maxOccurs="1">
+				<simpleType>
+					<restriction base="string">
+						<enumeration value="started"></enumeration>
+						<enumeration value="finished"></enumeration>
+						<enumeration value="cancelled"></enumeration>
+					</restriction>
+				</simpleType>
+			</element>
+		</sequence>
+	</complexType>
+	<complexType name="Account">
+		<sequence>
+			<element name="AccountId" type="string" minOccurs="0"
+				maxOccurs="1">
+			</element>
+			<element ref="tns:Person" minOccurs="0"></element>
+			<element ref="tns:Bill" minOccurs="0"></element>
+			<element ref="tns:Vehicle" minOccurs="0"></element>
+			<element ref="tns:AccountStatusType" minOccurs="0" maxOccurs="1">
+			</element>
+        </sequence>
+	</complexType>
+	<complexType name="Vehicle">
+		<sequence>
+			<element name="VehicleId" type="string" minOccurs="0"
+				maxOccurs="1"></element>
+			<element name="Brand" type="string" minOccurs="0" maxOccurs="1"></element>
+			<element name="Model" type="string" minOccurs="0" maxOccurs="1"></element>
+			<element name="ProductionDate" type="date" minOccurs="0"
+				maxOccurs="1"></element>
+			<element name="RegistrationNumber" type="string" minOccurs="0"
+				maxOccurs="1"></element>
+			<element name="VinNumber" type="string" minOccurs="0"
+				maxOccurs="1"></element>
+			<element name="Color" type="string" minOccurs="0" maxOccurs="1"></element>
+			<element ref="tns:VehicleType" minOccurs="0" maxOccurs="1"></element>
+		</sequence>
+	</complexType>
+	<complexType name="Fine">
+		<sequence>
+			<element name="FineId" type="string" minOccurs="0" maxOccurs="1">
+			</element>
+			<element name="FineAmount" type="double" minOccurs="0"
+				maxOccurs="1">
+			</element>
+			<element name="ControlId" type="string" minOccurs="0"
+				maxOccurs="1">
+			</element>
+			<element name="AccountId" type="string" minOccurs="0"
+				maxOccurs="1">
+			</element>
+			<element name="IssueDate" type="dateTime" minOccurs="0"
+				maxOccurs="1">
+			</element>
+			<element ref="tns:FineType" minOccurs="0" maxOccurs="1"></element>
+		</sequence>
+	</complexType>
+	<element name="Account" type="tns:Account"></element>
+	<element name="Address" type="tns:Address"></element>
+	<element name="Bill" type="tns:Bill"></element>
+	<element name="Control" type="tns:Control"></element>
+	<element name="Controller" type="tns:Controller"></element>
+	<element name="Fine" type="tns:Fine"></element>
+	<element name="Parking" type="tns:Parking"></element>
+	<element name="Person" type="tns:Person"></element>
+	<element name="Vehicle" type="tns:Vehicle"></element>
+	<element name="AccountStatusType">
+		<simpleType>
+			<restriction base="string">
+				<enumeration value="new"></enumeration>
+				<enumeration value="active"></enumeration>
+			</restriction>
+		</simpleType>
+	</element>
+	<element name="AddressType">
+		<simpleType>
+			<restriction base="string">
+				<enumeration value="residence"></enumeration>
+				<enumeration value="registration"></enumeration>
+				<enumeration value="correspondence"></enumeration>
+			</restriction>
+		</simpleType>
+	</element>
+	<element name="ParkingType">
+		<simpleType>
+			<restriction base="string">
+				<enumeration value="time"></enumeration>
+				<enumeration value="deadline"></enumeration>
+				<enumeration value="free"></enumeration>
+			</restriction>
+		</simpleType>
+	</element>
+	<element name="FineType">
+		<simpleType>
+			<restriction base="string">
+				<enumeration value="inactiveParking"></enumeration>
+				<enumeration value="inactiveAccount"></enumeration>
+			</restriction>
+		</simpleType>
+	</element>
+	<element name="VehicleType">
+		<simpleType>
+			<restriction base="string">
+				<enumeration value="personal"></enumeration>
+				<enumeration value="supply"></enumeration>
+			</restriction>
+		</simpleType>
+	</element>
+
+	<complexType name="BillRecharge">
+		<sequence>
+			<element ref="tns:Account" minOccurs="0" maxOccurs="1"></element>
+			<element ref="tns:Bill" minOccurs="0" maxOccurs="1"></element>
+			<element name="Amount" type="double" minOccurs="1" maxOccurs="1"></element>
+		</sequence>
+	</complexType>
+	
+    <element name="BillRecharge" type="tns:BillRecharge"></element>
+
+
+    <element name="AccountSearchCriteria" type="tns:AccountSearchCriteria"></element>
+
+    <complexType name="AccountSearchCriteria">
+    	<sequence>
+    		<choice>
+    			<element name="VehicleRegistrationNumber" type="string" />
+    			<element name="VehicleVinNumber" type="string" />
+    			<element name="PersonId" type="string"></element>
+                <element name="BillId" type="string"></element>
+            </choice>
+
+    	</sequence>
+    </complexType>
+</schema>

@@ -1,0 +1,19 @@
+{
+  "properties": {
+    "account_id": {
+      "type": "string"
+    },
+    "person_id": {
+      "type": "string"
+    },
+    "billing_id": {
+      "type": "string"
+    },
+    "vehicle_id": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string"
+    }
+  }
+}

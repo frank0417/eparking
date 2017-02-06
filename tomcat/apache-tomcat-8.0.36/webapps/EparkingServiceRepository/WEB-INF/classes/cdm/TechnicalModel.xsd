@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema targetNamespace="http://eparking.pl/technical"
+	elementFormDefault="qualified" xmlns="http://www.w3.org/2001/XMLSchema"
+	xmlns:tns="http://eparking.pl/technical">
+	<element name="BaseRequest" type="tns:BaseRequest"></element>
+	<element name="BaseResponse" type="tns:BaseResponse"></element>
+	<complexType name="BaseResponse">
+		<sequence>
+			<element name="Status" type="string" minOccurs="1" maxOccurs="1" />
+			<element ref="tns:Error" minOccurs="0" maxOccurs="1" />
+		</sequence>
+	</complexType>
+	<complexType name="BaseRequest">
+		<sequence>
+			<element name="RequestId" type="string" minOccurs="1"
+				maxOccurs="1">
+			</element>
+			<element name="RequestDate" type="dateTime" minOccurs="1"
+				maxOccurs="1">
+			</element>
+
+
+		</sequence>
+	</complexType>
+	<complexType name="BaseError">
+		<sequence>
+			<element name="ErrorCode" type="string" minOccurs="1"
+				maxOccurs="1">
+			</element>
+			<element name="ErrorDescription" type="string" minOccurs="1"
+				maxOccurs="1">
+			</element>
+			<element name="ExceptionCode" type="string" minOccurs="0"
+				maxOccurs="1">
+			</element>
+			<element name="ExceptionRoute" type="string" minOccurs="0"
+				maxOccurs="1">
+			</element>
+
+
+			<element ref="tns:BaseRequest" minOccurs="0" maxOccurs="1"></element>
+		</sequence>
+	</complexType>
+	<element name="Error" type="tns:BaseError"></element>
+
+	<complexType name="ExceptionInfo">
+		<sequence>
+			<element name="CamelExceptionClass" type="string"
+				minOccurs="0" />
+			<element name="CamelExceptionMessage" type="string"
+				minOccurs="0" />
+			<element name="CamelExceptionCauseClass" type="string"
+				minOccurs="0" />
+			<element name="CamelExceptionCauseMessage" type="string"
+				minOccurs="0" />
+			<element name="CamelRootCauseClass" type="string"
+				minOccurs="0" />
+			<element name="CamelRootCauseMessage" type="string"
+				minOccurs="0" />
+			<element name="CamelExceptionRoute" type="string" minOccurs="0"></element>
+		</sequence>
+	</complexType>
+
+	<element name="ExceptionInfo" type="tns:ExceptionInfo"></element>
+
+</schema>

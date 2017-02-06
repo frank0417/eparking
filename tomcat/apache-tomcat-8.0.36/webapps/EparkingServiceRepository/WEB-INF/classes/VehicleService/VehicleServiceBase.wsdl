@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+	xmlns:tns="http://eparking.pl/vehicleservice" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="VehicleServiceBase"
+	targetNamespace="http://eparking.pl/vehicleservice">
+	<wsdl:types>
+		<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+			<xsd:import namespace="http://eparking.pl/vehicleservice"
+				schemaLocation="VehicleServiceBase.xsd">
+			</xsd:import>
+		</xsd:schema>
+	</wsdl:types>
+	<wsdl:message name="addVehicleRequest">
+		<wsdl:part name="parameters" element="tns:addVehicle"></wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="addVehicleResponse">
+		<wsdl:part name="parameters" element="tns:addVehicleResponse"></wsdl:part>
+	</wsdl:message>
+	<wsdl:portType name="VehicleServiceBase">
+		<wsdl:operation name="addVehicle">
+			<wsdl:input message="tns:addVehicleRequest"></wsdl:input>
+			<wsdl:output message="tns:addVehicleResponse"></wsdl:output>
+		</wsdl:operation>
+	</wsdl:portType>
+	<wsdl:binding name="VehicleServiceBaseSOAP" type="tns:VehicleServiceBase">
+		<soap:binding style="document"
+			transport="http://schemas.xmlsoap.org/soap/http" />
+		<wsdl:operation name="addVehicle">
+			<soap:operation soapAction="http://eparking.pl/vehicleservice/addVehicle" />
+			<wsdl:input>
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+	</wsdl:binding>
+	<wsdl:service name="VehicleServiceBase">
+		<wsdl:port binding="tns:VehicleServiceBaseSOAP" name="VehicleServiceBaseSOAP">
+			<soap:address location="http://eparking.pl/vehicleservice" />
+		</wsdl:port>
+	</wsdl:service>
+</wsdl:definitions>

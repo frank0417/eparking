@@ -1,0 +1,11 @@
+05-Feb-2017 15:00:41.690 INFO [localhost-startStop-1] org.restlet.ext.httpclient.HttpClientHelper.start Starting the Apache HTTP client
+05-Feb-2017 15:06:35.325 INFO [http-apr-8080-exec-11] org.restlet.ext.httpclient.HttpClientHelper.stop Stopping the HTTP client
+05-Feb-2017 15:06:39.278 INFO [http-apr-8080-exec-11] org.restlet.ext.httpclient.HttpClientHelper.start Starting the Apache HTTP client
+05-Feb-2017 21:09:27.776 INFO [localhost-startStop-2] org.restlet.ext.httpclient.HttpClientHelper.stop Stopping the HTTP client
+05-Feb-2017 21:12:26.238 INFO [localhost-startStop-1] org.restlet.ext.httpclient.HttpClientHelper.start Starting the Apache HTTP client
+05-Feb-2017 21:14:55.912 INFO [localhost-startStop-1] org.restlet.ext.httpclient.HttpClientHelper.start Starting the Apache HTTP client
+05-Feb-2017 21:15:26.165 INFO [localhost-startStop-1] org.restlet.ext.httpclient.HttpClientHelper.stop Stopping the HTTP client
+05-Feb-2017 21:19:04.928 INFO [localhost-startStop-1] org.restlet.ext.httpclient.HttpClientHelper.start Starting the Apache HTTP client
+05-Feb-2017 21:20:04.158 INFO [localhost-startStop-2] org.restlet.ext.httpclient.HttpClientHelper.stop Stopping the HTTP client
+05-Feb-2017 21:20:32.811 INFO [localhost-startStop-1] org.restlet.ext.httpclient.HttpClientHelper.start Starting the Apache HTTP client
+05-Feb-2017 21:22:17.390 INFO [localhost-startStop-2] org.restlet.ext.httpclient.HttpClientHelper.stop Stopping the HTTP client

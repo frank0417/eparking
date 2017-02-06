@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://eparking.pl/billservice"
+	xmlns:tns="http://eparking.pl/billservice" elementFormDefault="qualified"
+	xmlns:Q2="http://eparking.pl/base" xmlns:Q1="http://eparking.pl/technical">
+
+	<import schemaLocation="../cdm/BaseModel.xsd" namespace="http://eparking.pl/base"></import>
+	<import schemaLocation="../cdm/TechnicalModel.xsd" namespace="http://eparking.pl/technical"></import>
+	<element name="registerBill" type="tns:registerBill">
+	</element>
+	<element name="registerBillResponse" type="tns:registerBillResponse">
+	</element>
+	<element name="rechargeBill" type="tns:rechargeBill">
+	</element>
+	<element name="rechargeBillResponse" type="tns:rechargeBillResponse">
+	</element>
+	<element name="addBill" type="tns:addBill">
+	</element>
+	<element name="addBillResponse" type="tns:addBillResponse">
+	</element>
+	<element name="modifyBill" type="tns:modifyBill">
+	</element>
+	<element name="modifyBillResponse" type="tns:modifyBillResponse">
+	</element>
+
+	<element name="getBill" type="tns:getBill">
+	</element>
+	<element name="getBillResponse" type="tns:getBillResponse">
+	</element>
+
+
+	<complexType name="addBill">
+		<complexContent>
+			<extension base="Q1:BaseRequest">
+				<sequence>
+					<element ref="Q2:Person"></element>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+
+	<complexType name="addBillResponse">
+		<complexContent>
+			<extension base="Q1:BaseResponse">
+				<sequence>
+					<element ref="Q2:Bill" minOccurs="0"></element>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+
+	<complexType name="getBill">
+		<complexContent>
+			<extension base="Q1:BaseRequest">
+				<sequence>
+					<element ref="Q2:Bill"></element>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+
+	<complexType name="getBillResponse">
+		<complexContent>
+			<extension base="Q1:BaseResponse">
+				<sequence>
+					<element ref="Q2:Bill" minOccurs="0"></element>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+
+	<complexType name="modifyBill">
+		<complexContent>
+			<extension base="Q1:BaseRequest">
+				<sequence>
+					<element ref="Q2:Bill"></element>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+
+	<complexType name="modifyBillResponse">
+		<complexContent>
+			<extension base="Q1:BaseResponse"></extension>
+		</complexContent>
+	</complexType>
+
+	<complexType name="rechargeBill">
+		<complexContent>
+			<extension base="Q1:BaseRequest">
+				<sequence>
+					<element ref="Q2:BillRecharge"></element>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+
+	<complexType name="rechargeBillResponse">
+		<complexContent>
+			<extension base="Q1:BaseResponse">
+				<sequence>
+					<element ref="Q2:Bill" minOccurs="0"></element>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+
+	<complexType name="registerBill">
+		<complexContent>
+			<extension base="Q1:BaseRequest">
+				<sequence>
+					<element ref="Q2:Person"></element>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+
+	<complexType name="registerBillResponse">
+		<complexContent>
+			<extension base="Q1:BaseResponse">
+				<sequence>
+					<element ref="Q2:Bill" minOccurs="0"></element>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+</schema>

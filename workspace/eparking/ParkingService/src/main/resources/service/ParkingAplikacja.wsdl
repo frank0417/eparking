@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+	xmlns:tns="http://eparking.pl/api/aplikacja/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="ParkingAplikacja"
+	targetNamespace="http://eparking.pl/api/aplikacja/">
+	<wsdl:types>
+		<xsd:schema targetNamespace="http://eparking.pl/api/aplikacja/"
+			xmlns:Q1="http://eparking.pl/base" xmlns:Q2="http://eparking.pl/technical">
+			<xsd:element name="ModyfikujParking">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="ModyfikujParkingKonto" type="xsd:string"
+							minOccurs="1" maxOccurs="1" />
+						<xsd:element name="ModyfikujParkingParking" type="xsd:string"
+							minOccurs="1" maxOccurs="1">
+						</xsd:element>
+						<xsd:element name="ModyfikujParkingPojazd" type="xsd:string"
+							minOccurs="1" maxOccurs="1">
+						</xsd:element>
+						<xsd:element name="ModyfikujParkingStart" type="xsd:dateTime"
+							minOccurs="0" maxOccurs="1">
+						</xsd:element>
+						<xsd:element name="ModyfikujParkingKoniec" type="xsd:dateTime"
+							minOccurs="0" maxOccurs="1">
+						</xsd:element>
+						<xsd:element name="ModyfikujParkingPoczta" type="xsd:string"
+							minOccurs="0" maxOccurs="1">
+						</xsd:element>
+						<xsd:element name="ModyfikujParkingMiasto" type="xsd:string"
+							minOccurs="0" maxOccurs="1">
+						</xsd:element>
+						<xsd:element name="ModyfikujParkingUlica" type="xsd:string"
+							minOccurs="0" maxOccurs="1">
+						</xsd:element>
+						<xsd:element name="ModyfikujParkingNumer" type="xsd:string"
+							minOccurs="0" maxOccurs="1">
+						</xsd:element>
+						<xsd:element name="ModyfikujParkingCzas" type="xsd:string"
+							minOccurs="0" maxOccurs="1">
+						</xsd:element>
+						<xsd:element name="ModyfikujParkingCena" type="xsd:string"
+							minOccurs="0" maxOccurs="1">
+						</xsd:element>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="ModyfikujParkingResponse">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="ModyfikujParkingSukces" type="xsd:int"
+							minOccurs="1" maxOccurs="1" />
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="DodajParking">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="DodajParkingStart" type="xsd:dateTime"
+							minOccurs="1" maxOccurs="1">
+						</xsd:element>
+						<xsd:element name="DodajParkingKoniec" type="xsd:dateTime"
+							minOccurs="1" maxOccurs="1">
+						</xsd:element>
+						<xsd:element name="DodajParkingKonto" type="xsd:string"
+							minOccurs="1" maxOccurs="1" />
+						<xsd:element name="DodajParkingPojazd" type="xsd:string"
+							minOccurs="1" maxOccurs="1">
+						</xsd:element>
+						<xsd:element name="DodajParkingKodPocztowy" type="xsd:string"
+							minOccurs="1" maxOccurs="1">
+						</xsd:element>
+						<xsd:element name="DodajParkingMiasto" type="xsd:string"
+							minOccurs="1" maxOccurs="1">
+						</xsd:element>
+						<xsd:element name="DodajParkingUlica" type="xsd:string"
+							minOccurs="1" maxOccurs="1">
+						</xsd:element>
+						<xsd:element name="DodajParkingNumer" type="xsd:string"
+							minOccurs="1" maxOccurs="1">
+						</xsd:element>
+						<xsd:element name="DodajParkingCzas" type="xsd:string"
+							minOccurs="1" maxOccurs="1">
+						</xsd:element>
+						<xsd:element name="DodajParkingCena" type="xsd:string"
+							minOccurs="1" maxOccurs="1">
+						</xsd:element>
+						<xsd:element name="DodajParkingSaldoDodatnie" type="xsd:boolean"
+							minOccurs="1" maxOccurs="1">
+						</xsd:element>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="DodajParkingResponse">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="DodajParkingSukces" type="xsd:int"
+							minOccurs="1" maxOccurs="1">
+						</xsd:element>
+						<xsd:element name="DodajParkingParking" type="xsd:string"
+							minOccurs="0" maxOccurs="1">
+						</xsd:element>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="DodajKontrole">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="DodajKontroleData" type="xsd:dateTime"
+							minOccurs="1" maxOccurs="1">
+						</xsd:element>
+
+						<xsd:element name="DodajKontroleKontroler" type="xsd:string"
+							minOccurs="1" maxOccurs="1">
+						</xsd:element>
+						<xsd:element name="DodajKontroleAdres" type="xsd:string"
+							minOccurs="1" maxOccurs="1">
+						</xsd:element>
+						<xsd:element name="DodajKontrolePojazd" type="xsd:string"
+							minOccurs="1" maxOccurs="1">
+						</xsd:element>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="DodajKontroleResponse">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="DodajKontroleSukces" type="xsd:int"
+							minOccurs="1" maxOccurs="1">
+						</xsd:element>
+						<xsd:element name="DodajKontroleKontrola" type="xsd:string"
+							minOccurs="0" maxOccurs="1">
+						</xsd:element>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="DodajMandat">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="DodajMandatKwota" type="xsd:string"
+							minOccurs="1" maxOccurs="1">
+						</xsd:element>
+						<xsd:element name="DodajMandatIdKontroli" type="xsd:string"
+							minOccurs="1" maxOccurs="1">
+						</xsd:element>
+						<xsd:element name="DodajMandatIdKontaKierowcy" type="xsd:string"
+							minOccurs="1" maxOccurs="1">
+						</xsd:element>
+						<xsd:element name="DodajMandatDataKontroli" type="xsd:string"
+							minOccurs="1" maxOccurs="1">
+						</xsd:element>
+						<xsd:element name="DodajMandatTypMandatu" type="xsd:string"
+							minOccurs="1" maxOccurs="1">
+						</xsd:element>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="DodajMandatResponse">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="DodajMandatSukces" type="xsd:int"
+							minOccurs="1" maxOccurs="1">
+						</xsd:element>
+						<xsd:element name="DodajMandatIdMandatu" type="xsd:string"
+							minOccurs="0" maxOccurs="1">
+						</xsd:element>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:schema>
+	</wsdl:types>
+	<wsdl:message name="ModyfikujParkingRequest">
+		<wsdl:part element="tns:ModyfikujParking" name="parameters" />
+	</wsdl:message>
+	<wsdl:message name="ModyfikujParkingResponse">
+		<wsdl:part element="tns:ModyfikujParkingResponse" name="parameters" />
+	</wsdl:message>
+	<wsdl:message name="DodajParkingRequest">
+		<wsdl:part name="parameters" element="tns:DodajParking"></wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="DodajParkingResponse">
+		<wsdl:part name="parameters" element="tns:DodajParkingResponse"></wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="DodajKontroleRequest">
+		<wsdl:part name="parameters" element="tns:DodajKontrole"></wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="DodajKontroleResponse">
+		<wsdl:part name="parameters" element="tns:DodajKontroleResponse"></wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="DodajMandatRequest">
+		<wsdl:part name="parameters" element="tns:DodajMandat"></wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="DodajMandatResponse">
+		<wsdl:part name="parameters" element="tns:DodajMandatResponse"></wsdl:part>
+	</wsdl:message>
+	<wsdl:portType name="Parking">
+		<wsdl:operation name="ModyfikujParking">
+			<wsdl:input message="tns:ModyfikujParkingRequest" />
+			<wsdl:output message="tns:ModyfikujParkingResponse" />
+		</wsdl:operation>
+		<wsdl:operation name="DodajParking">
+			<wsdl:input message="tns:DodajParkingRequest"></wsdl:input>
+			<wsdl:output message="tns:DodajParkingResponse"></wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="DodajKontrole">
+			<wsdl:input message="tns:DodajKontroleRequest"></wsdl:input>
+			<wsdl:output message="tns:DodajKontroleResponse"></wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="DodajMandat">
+			<wsdl:input message="tns:DodajMandatRequest"></wsdl:input>
+			<wsdl:output message="tns:DodajMandatResponse"></wsdl:output>
+		</wsdl:operation>
+	</wsdl:portType>
+	<wsdl:binding name="ParkingAplikacja_Binding" type="tns:Parking">
+
+		<soap:binding style="document"
+			transport="http://schemas.xmlsoap.org/soap/http" />
+		<wsdl:operation name="ModyfikujParking">
+
+			<soap:operation soapAction="http://eparking.pl/api/aplikacja/ModyfikujParking" />
+			<wsdl:input>
+
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+
+				<soap:body use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="DodajParking">
+
+			<soap:operation soapAction="http://eparking.pl/api/aplikacja/DodajParking" />
+			<wsdl:input>
+
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+
+				<soap:body use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="DodajKontrole">
+
+			<soap:operation soapAction="http://eparking.pl/api/aplikacja/DodajKontrole" />
+			<wsdl:input>
+
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+
+				<soap:body use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="DodajMandat">
+
+			<soap:operation soapAction="http://eparking.pl/api/aplikacja/DodajMandat" />
+			<wsdl:input>
+
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+
+				<soap:body use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+
+	</wsdl:binding>
+	<wsdl:service name="ParkingAplikacja_Usluga">
+		<wsdl:port binding="tns:ParkingAplikacja_Binding" name="ParkingAplikacja_Port">
+			<soap:address location="http://eparking.pl/api/aplikacja/" />
+		</wsdl:port>
+	</wsdl:service>
+</wsdl:definitions>

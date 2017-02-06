@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://eparking.pl/controlservice"
+	xmlns:tns="http://eparking.pl/controlservice" elementFormDefault="qualified"
+	xmlns:Q1="http://eparking.pl/base" xmlns:Q2="http://eparking.pl/technical">
+
+	<import schemaLocation="../cdm/BaseModel.xsd" namespace="http://eparking.pl/base"></import>
+	<import schemaLocation="../cdm/TechnicalModel.xsd" namespace="http://eparking.pl/technical"></import>
+	<element name="controlParking" type="tns:controlParking">
+			</element>
+	<element name="controlParkingResponse" type="tns:controlParkingResponse">
+			</element>
+
+	<complexType name="controlParking">
+		<complexContent>
+			<extension base="Q2:BaseRequest">
+				<sequence>
+					<element ref="Q1:Control"></element>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+
+	<complexType name="controlParkingResponse">
+		<complexContent>
+			<extension base="Q2:BaseResponse">
+				<sequence>
+					<element ref="Q1:Fine" minOccurs="0"></element>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+</schema>

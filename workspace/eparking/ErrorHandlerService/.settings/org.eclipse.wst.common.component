@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?><project-modules id="moduleCoreId" project-version="1.5.0">
+    <wb-module deploy-name="ErrorHandlerService-1.0.0">
+        <wb-resource deploy-path="/" source-path="/target/m2e-wtp/web-resources"/>
+        <wb-resource deploy-path="/" source-path="/src/main/webapp" tag="defaultRootSource"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/java"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/resources"/>
+        <wb-resource deploy-path="/" source-path="/WebContent"/>
+        <property name="java-output-path" value="/ErrorHandlerService/target/classes"/>
+        <property name="context-root" value="ErrorHandlerService"/>
+        <property name="component.exclusion.patterns" value="WEB-INF/lib/camel-core*.jar,WEB-INF/lib/slf4j*.jar,WEB-INF/lib/log4j*.jar,WEB-INF/lib/mysql*.jar,WEB-INF/classes/pl/eparking/accountservice/**,WEB-INF/classes/pl/eparking/base/**,WEB-INF/classes/pl/eparking/billservice/**,WEB-INF/classes/pl/eparking/controlservice/**,WEB-INF/classes/pl/eparking/errorhandlerservice/**,WEB-INF/classes/pl/eparking/parkingservice/**,WEB-INF/classes/pl/eparking/personservice/**,WEB-INF/classes/pl/eparking/technical/**,WEB-INF/classes/pl/eparking/vehicleservice/**"/>
+    </wb-module>
+</project-modules>

@@ -1,0 +1,73 @@
+{
+  "properties": {
+    "person": {
+      "type": "object",
+      "properties": {
+        "first_name": {
+          "type": "string"
+        },
+        "last_name": {
+          "type": "string"
+        },
+        "pesel": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "address": {
+          "type": "object",
+          "properties": {
+            "address_type": {
+              "type": "string"
+            },
+            "province": {
+              "type": "string"
+            },
+            "postal_code": {
+              "type": "string"
+            },
+            "city": {
+              "type": "string"
+            },
+            "street": {
+              "type": "string"
+            },
+            "street_number": {
+              "type": "string"
+            },
+            "flat_number": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "vehicle": {
+      "type": "object",
+      "properties": {
+        "vehicle_type": {
+          "type": "string"
+        },
+        "brand": {
+          "type": "string"
+        },
+        "model": {
+          "type": "string"
+        },
+        "registration_number": {
+          "type": "string"
+        },
+        "vin_number": {
+          "type": "string"
+        },
+        "production_date": {
+          "type": "string"
+        },
+        "color": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

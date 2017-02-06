@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+	xmlns:tns="http://eparking.pl/personservice" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="PersonServiceBase"
+	targetNamespace="http://eparking.pl/personservice">
+	<wsdl:types>
+		<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+			<xsd:import namespace="http://eparking.pl/personservice"
+				schemaLocation="PersonServiceBase.xsd">
+			</xsd:import>
+		</xsd:schema>
+	</wsdl:types>
+	<wsdl:message name="addPersonRequest">
+		<wsdl:part name="parameters" element="tns:addPerson"></wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="addPersonResponse">
+		<wsdl:part name="parameters" element="tns:addPersonResponse"></wsdl:part>
+	</wsdl:message>
+	<wsdl:portType name="PersonServiceBase">
+		<wsdl:operation name="addPerson">
+			<wsdl:input message="tns:addPersonRequest"></wsdl:input>
+			<wsdl:output message="tns:addPersonResponse"></wsdl:output>
+		</wsdl:operation>
+	</wsdl:portType>
+	<wsdl:binding name="PersonServiceBaseSOAP" type="tns:PersonServiceBase">
+		<soap:binding style="document"
+			transport="http://schemas.xmlsoap.org/soap/http" />
+		<wsdl:operation name="addPerson">
+			<soap:operation soapAction="http://eparking.pl/personservice/addPerson" />
+			<wsdl:input>
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+	</wsdl:binding>
+	<wsdl:service name="PersonServiceBase">
+		<wsdl:port binding="tns:PersonServiceBaseSOAP" name="PersonServiceBaseSOAP">
+			<soap:address location="http://eparking.pl/personservice" />
+		</wsdl:port>
+	</wsdl:service>
+</wsdl:definitions>

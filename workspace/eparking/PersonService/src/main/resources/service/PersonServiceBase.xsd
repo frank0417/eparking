@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://eparking.pl/personservice"
+	xmlns:tns="http://eparking.pl/personservice" elementFormDefault="qualified"
+	xmlns:Q1="http://eparking.pl/base" xmlns:Q2="http://eparking.pl/technical">
+
+	<import schemaLocation="../cdm/BaseModel.xsd" namespace="http://eparking.pl/base"></import>
+	<import schemaLocation="../cdm/TechnicalModel.xsd" namespace="http://eparking.pl/technical"></import>
+	<element name="addPerson" type="tns:addPerson">
+	</element>
+	<element name="addPersonResponse" type="tns:addPersonResponse">
+	</element>
+
+	<complexType name="addPerson">
+		<complexContent>
+			<extension base="Q2:BaseRequest">
+				<sequence>
+					<element ref="Q1:Person"></element>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+
+	<complexType name="addPersonResponse">
+		<complexContent>
+			<extension base="Q2:BaseResponse">
+				<sequence>
+					<element ref="Q1:Person" minOccurs="0"></element>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+</schema>

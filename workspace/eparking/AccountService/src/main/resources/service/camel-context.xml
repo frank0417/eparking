@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:camel="http://camel.apache.org/schema/spring"
+       xsi:schemaLocation="
+         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+         http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+
+	<bean id="jpa" class="org.apache.camel.component.jpa.JpaComponent">
+		<property name="entityManagerFactory" ref="factory" />
+	</bean>
+	<bean id="factory" class="org.springframework.orm.jpa.LocalEntityManagerFactoryBean">
+		<property name="persistenceUnitName" value="eparkingPU" />
+		<property name="jpaVendorAdapter" ref="jpaAdapter" />
+	</bean>
+	<bean id="jpaAdapter" class="org.springframework.orm.jpa.vendor.OpenJpaVendorAdapter">
+		<property name="databasePlatform" value="org.apache.openjpa.jdbc.sql.MySQLDictionary" />
+		<property name="database" value="MYSQL" />
+	</bean>
+	<bean id="transactionTemplate" class="org.springframework.transaction.support.TransactionTemplate">
+		<property name="transactionManager" ref="eparkingTransactionManager" />
+			<!-- <bean class="org.springframework.orm.jpa.JpaTransactionManager">
+				<property name="entityManagerFactory" ref="factory" />
+			</bean> -->
+		<!-- </property> -->
+	</bean>
+	<bean id="eparkingTransactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+		<property name="entityManagerFactory" ref="factory" />
+	</bean>
+
+	<bean id="Operator" class="pl.utils.Operator" />
+	
+	<camel:camelContext>
+		
+		<camel:errorHandler id="EparkingNEH" type="NoErrorHandler" />
+		
+		<camel:dataFormats>
+			<camel:jaxb id="CurrentServiceDF" contextPath="pl.eparking.accountservice" prettyPrint="true" />
+		</camel:dataFormats>
+		
+		<camel:restConfiguration component="servlet" bindingMode="json"/>
+
+		<camel:rest path="/account" id="AccountServiceAdapterRest">
+			<camel:post uri="/register" type="pl.eparkingrest.AccountRegistration" outType="pl.eparkingrest.Account">
+				<camel:to uri="vm:AccountServiceAdapterRegisterAccount"/>
+			</camel:post>
+		</camel:rest>
+		
+		<camel:route id="AccountServiceAdapterRegisterAccount">
+			<camel:from uri="vm:AccountServiceAdapterRegisterAccount"/>
+			<camel:doTry>
+				<camel:setHeader headerName="workerRoute"><camel:simple>${routeId}</camel:simple></camel:setHeader>
+				<camel:bean ref="Operator" method="registerAccountAdapterValidate(${body})"/>
+				<camel:bean ref="Operator" method="registerAccountRestToRegisterAccount(${body})" />
+				<camel:setHeader headerName="masterClass"><camel:simple>${body.getClass().getName()}</camel:simple></camel:setHeader>
+				<camel:setHeader headerName="workerClass"><camel:simple>${body.getClass().getName()}</camel:simple></camel:setHeader>
+				<camel:setProperty propertyName="registerAccount"><camel:simple>${body}</camel:simple></camel:setProperty>
+				<camel:wireTap uri="vm:EparkingLogger" copy="true" pattern="InOnly"/>
+				<camel:to uri="vm:AccountServiceBaseRegisterAccount" />
+				<camel:bean ref="Operator" method="registerAccountRestResponse(${body})" />
+				<camel:removeHeaders pattern="*" />
+				<camel:setHeader headerName="CamelHttpResponseCode"><camel:simple>200</camel:simple></camel:setHeader>
+				<camel:wireTap uri="vm:EparkingLogger" />
+			<camel:doCatch>
+				<camel:exception>java.lang.IllegalArgumentException</camel:exception>
+				<camel:handled><camel:constant>true</camel:constant></camel:handled>
+				<camel:setHeader headerName="requestOriginal"><camel:simple>${exchangeProperty.registerAccount}</camel:simple></camel:setHeader>
+				<camel:to uri="vm:ErrorHandlerAdapter" />
+				<camel:setHeader headerName="CamelHttpResponseCode"><camel:simple>400</camel:simple></camel:setHeader>
+				<camel:setBody><camel:constant></camel:constant></camel:setBody>
+			</camel:doCatch>
+			<camel:doCatch>
+				<camel:exception>java.lang.Exception</camel:exception>
+				<camel:handled><camel:constant>true</camel:constant></camel:handled>
+				<camel:setHeader headerName="requestOriginal"><camel:simple>${exchangeProperty.registerAccount}</camel:simple></camel:setHeader>
+				<camel:to uri="vm:ErrorHandlerAdapter" />
+				<camel:setHeader headerName="CamelHttpResponseCode"><camel:simple>500</camel:simple></camel:setHeader>
+				<camel:setBody><camel:constant></camel:constant></camel:setBody>
+			</camel:doCatch>
+			</camel:doTry>
+		</camel:route>
+		
+		<camel:route id="AccountServiceBaseRegisterAccount" errorHandlerRef="EparkingNEH">
+			<camel:from uri="vm:AccountServiceBaseRegisterAccount" />
+			<camel:setHeader headerName="workerClass"><camel:simple>${body.getClass().getName()}</camel:simple></camel:setHeader>
+			<camel:setHeader headerName="workerRoute"><camel:simple>${routeId}</camel:simple></camel:setHeader>
+			<camel:wireTap uri="vm:EparkingLogger" />
+			<camel:setProperty propertyName="registerAccount"><camel:simple>${body}</camel:simple></camel:setProperty>
+			<camel:bean ref="Operator" method="registerAccountToAddPerson(${exchangeProperty.registerAccount})" />
+			<camel:to uri="vm:PersonServiceConnectorAddPerson" />
+			<camel:setProperty propertyName="addPersonResponse"><camel:simple>${body}</camel:simple></camel:setProperty>
+			<camel:bean ref="Operator" method="registerAccountToRegisterBill(${exchangeProperty.registerAccount}, ${exchangeProperty.addPersonResponse})" />
+			<camel:to uri="vm:BillServiceBaseRegisterBill"/>
+			<camel:setProperty propertyName="registerBillResponse"><camel:simple>${body}</camel:simple></camel:setProperty>
+			<camel:bean ref="Operator" method="registerAccountToAddAccount(${exchangeProperty.registerAccount}, ${exchangeProperty.addPersonResponse}, ${exchangeProperty.registerBillResponse})" />
+			<camel:to uri="vm:AccountServiceConnectorAddAccount"/>
+			<camel:setProperty propertyName="addAccountResponse"><camel:simple>${body}</camel:simple></camel:setProperty>
+			<camel:bean ref="Operator" method="registerAccountToRegisterAccountResponse(${exchangeProperty.addAccountResponse})"/>
+			<camel:wireTap uri="vm:EparkingLogger" />
+		</camel:route>
+
+		<camel:route id="AccountServiceConnectorAddAccount" errorHandlerRef="EparkingNEH">
+			<camel:from uri="vm:AccountServiceConnectorAddAccount" />
+			<camel:setHeader headerName="workerClass"><camel:simple>${body.getClass().getName()}</camel:simple></camel:setHeader>
+			<camel:setHeader headerName="workerRoute"><camel:simple>${routeId}</camel:simple></camel:setHeader>
+			<camel:wireTap uri="vm:EparkingLogger" />
+			<camel:bean ref="Operator" method="AddAccountToKonto(${body})" />
+			<camel:to uri="jpa://pl.eparkingdb.Konto?persistenceUnit=eparkingPU&amp;flushOnSend=true&amp;transactionManager=#eparkingTransactionManager" />
+			<camel:bean ref="Operator" method="KontoToAddAccountResponse(${body})" />
+			<camel:wireTap uri="vm:EparkingLogger" />
+		</camel:route>
+		
+		<camel:route id="AccountServiceConnectorGetAccount" errorHandlerRef="EparkingNEH">
+			<camel:from uri="vm:AccountServiceConnectorGetAccount" />
+			<camel:setHeader headerName="workerClass"><camel:simple>${body.getClass().getName()}</camel:simple></camel:setHeader>
+			<camel:setHeader headerName="workerRoute"><camel:simple>${routeId}</camel:simple></camel:setHeader>
+			<camel:wireTap uri="vm:EparkingLogger" />
+			<camel:bean ref="Operator" method="getAccount(${body})" />
+			<camel:wireTap uri="vm:EparkingLogger" />
+		</camel:route>
+
+		<camel:route id="AccountServiceConnectorFindAccount" errorHandlerRef="EparkingNEH">
+			<camel:from uri="vm:AccountServiceConnectorFindAccount" />
+			<camel:setHeader headerName="workerClass"><camel:simple>${body.getClass().getName()}</camel:simple></camel:setHeader>
+			<camel:setHeader headerName="workerRoute"><camel:simple>${routeId}</camel:simple></camel:setHeader>
+			<camel:setProperty propertyName="findAccount"><camel:simple>${body}</camel:simple></camel:setProperty>
+			<camel:wireTap uri="vm:EparkingLogger" />
+			<camel:when>
+				<camel:simple>${exchangeProperty.findAccount.getAccountSearchCriteria().getVehicleRegistrationNumber()} == null &amp;&amp; ${exchangeProperty.findAccount.getAccountSearchCriteria().getBillId()} == null &amp;&amp; ${exchangeProperty.findAccount.getAccountSearchCriteria().getPersonId()} == null &amp;&amp; ${exchangeProperty.findAccount.getAccountSearchCriteria().getVehicleVinNumber()} == null</camel:simple>
+				<camel:setHeader headerName="requestOriginal"><camel:simple>${exchangeProperty.findAccount}</camel:simple></camel:setHeader>
+				<camel:throwException message="EparkingValidationException: Missing Account Search Critera" exceptionType="java.io.IOException" />
+			</camel:when>
+			<camel:bean ref="Operator" method="findAccount(${exchangeProperty.findAccount})" />
+			<camel:wireTap uri="vm:EparkingLogger" />
+		</camel:route>
+
+	</camel:camelContext>
+</beans>
+

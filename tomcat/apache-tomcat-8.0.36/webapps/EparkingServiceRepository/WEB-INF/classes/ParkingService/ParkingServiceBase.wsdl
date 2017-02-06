@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+	xmlns:tns="http://eparking.pl/parkingservice" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="ParkingServiceBase"
+	targetNamespace="http://eparking.pl/parkingservice">
+	<wsdl:types>
+		<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+			<xsd:import namespace="http://eparking.pl/parkingservice"
+				schemaLocation="ParkingServiceBase.xsd">
+			</xsd:import>
+		</xsd:schema>
+	</wsdl:types>
+	<wsdl:message name="addParkingRequest">
+		<wsdl:part name="parameters" element="tns:addParking"></wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="addParkingResponse">
+		<wsdl:part name="parameters" element="tns:addParkingResponse"></wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="endParkingRequest">
+		<wsdl:part name="parameters" element="tns:endParking"></wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="endParkingResponse">
+		<wsdl:part name="parameters" element="tns:endParkingResponse"></wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="modifyParkingRequest">
+		<wsdl:part name="parameters" element="tns:modifyParking"></wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="modifyParkingResponse">
+		<wsdl:part name="parameters" element="tns:modifyParkingResponse">
+		</wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="startParkingRequest">
+		<wsdl:part name="parameters" element="tns:startParking">
+		</wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="startParkingResponse">
+		<wsdl:part name="parameters" element="tns:startParkingResponse">
+		</wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="addControlRequest">
+		<wsdl:part name="parameters" element="tns:addControl"></wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="addControlResponse">
+		<wsdl:part name="parameters" element="tns:addControlResponse"></wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="addFineRequest">
+		<wsdl:part name="parameters" element="tns:addFine"></wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="addFineResponse">
+		<wsdl:part name="parameters" element="tns:addFineResponse"></wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="saveParkingRequest">
+		<wsdl:part name="parameters" element="tns:saveParking"></wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="saveParkingResponse">
+		<wsdl:part name="parameters" element="tns:saveParkingResponse">
+		</wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="getParkingRequest">
+		<wsdl:part name="parameters" element="tns:getParking"></wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="getParkingResponse">
+		<wsdl:part name="parameters" element="tns:getParkingResponse"></wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="updateParkingRequest">
+		<wsdl:part name="parameters" element="tns:updateParking"></wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="updateParkingResponse">
+		<wsdl:part name="parameters" element="tns:updateParkingResponse">
+		</wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="notifyParkingRequest">
+		<wsdl:part name="parameters" element="tns:notifyParking"></wsdl:part>
+	</wsdl:message>
+	<wsdl:portType name="ParkingServiceBase">
+		<wsdl:operation name="addParking">
+			<wsdl:input message="tns:addParkingRequest"></wsdl:input>
+			<wsdl:output message="tns:addParkingResponse"></wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="endParking">
+			<wsdl:input message="tns:endParkingRequest"></wsdl:input>
+			<wsdl:output message="tns:endParkingResponse"></wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="modifyParking">
+			<wsdl:input message="tns:modifyParkingRequest"></wsdl:input>
+			<wsdl:output message="tns:modifyParkingResponse"></wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="startParking">
+			<wsdl:input message="tns:startParkingRequest"></wsdl:input>
+			<wsdl:output message="tns:startParkingResponse"></wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="addControl">
+			<wsdl:input message="tns:addControlRequest"></wsdl:input>
+			<wsdl:output message="tns:addControlResponse"></wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="addFine">
+			<wsdl:input message="tns:addFineRequest"></wsdl:input>
+			<wsdl:output message="tns:addFineResponse"></wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="saveParking">
+			<wsdl:input message="tns:saveParkingRequest"></wsdl:input>
+			<wsdl:output message="tns:saveParkingResponse"></wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="getParking">
+			<wsdl:input message="tns:getParkingRequest"></wsdl:input>
+			<wsdl:output message="tns:getParkingResponse"></wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="updateParking">
+			<wsdl:input message="tns:updateParkingRequest"></wsdl:input>
+			<wsdl:output message="tns:updateParkingResponse"></wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="notifyParking">
+			<wsdl:input message="tns:notifyParkingRequest"></wsdl:input>
+		</wsdl:operation>
+	</wsdl:portType>
+	<wsdl:binding name="ParkingServiceBaseSOAP" type="tns:ParkingServiceBase">
+
+		<soap:binding style="document"
+			transport="http://schemas.xmlsoap.org/soap/http" />
+		<wsdl:operation name="addParking">
+
+			<soap:operation soapAction="http://eparking.pl/parkingservice/addParking" />
+			<wsdl:input>
+
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+
+				<soap:body use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="endParking">
+
+			<soap:operation soapAction="http://eparking.pl/parkingservice/endParking" />
+			<wsdl:input>
+
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+
+				<soap:body use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="modifyParking">
+
+			<soap:operation soapAction="http://eparking.pl/parkingservice/modifyParking" />
+			<wsdl:input>
+
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+
+				<soap:body use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="startParking">
+
+			<soap:operation soapAction="http://eparking.pl/parkingservice/startParking" />
+			<wsdl:input>
+
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+
+				<soap:body use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="addControl">
+
+			<soap:operation soapAction="http://eparking.pl/parkingservice/addControl" />
+			<wsdl:input>
+
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+
+				<soap:body use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="addFine">
+
+			<soap:operation soapAction="http://eparking.pl/parkingservice/addFine" />
+			<wsdl:input>
+
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+
+				<soap:body use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="saveParking">
+
+			<soap:operation soapAction="http://eparking.pl/parkingservice/saveParking" />
+			<wsdl:input>
+
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+
+				<soap:body use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="getParking">
+
+			<soap:operation soapAction="http://eparking.pl/parkingservice/getParking" />
+			<wsdl:input>
+
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+
+				<soap:body use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="updateParking">
+
+			<soap:operation soapAction="http://eparking.pl/parkingservice/updateParking" />
+			<wsdl:input>
+
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+
+				<soap:body use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="notifyParking">
+			<soap:operation soapAction="http://eparking.pl/parkingservice/notifyParking" />
+			<wsdl:input>
+				<soap:body use="literal" />
+			</wsdl:input>
+		</wsdl:operation>
+	</wsdl:binding>
+	<wsdl:service name="ParkingServiceBase">
+		<wsdl:port binding="tns:ParkingServiceBaseSOAP" name="ParkingServiceBaseSOAP">
+			<soap:address location="http://eparking.pl/parkingservice" />
+		</wsdl:port>
+	</wsdl:service>
+</wsdl:definitions>
