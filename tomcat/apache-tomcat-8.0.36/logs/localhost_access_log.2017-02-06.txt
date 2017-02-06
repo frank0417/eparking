@@ -310,3 +310,4 @@
 127.0.0.1 - - [06/Feb/2017:20:48:13 +0100] "POST /ParkingService/parking/start/13978 HTTP/1.1" 200 28
 127.0.0.1 - - [06/Feb/2017:20:48:13 +0100] "POST /ParkingService/parking/start/13978 HTTP/1.1" 200 28
 127.0.0.1 - - [06/Feb/2017:20:48:13 +0100] "POST /ParkingService/parking/start/9999999999 HTTP/1.1" 200 28
+127.0.0.1 - admin [06/Feb/2017:21:43:26 +0100] "GET /manager/html/list?org.apache.catalina.filters.CSRF_NONCE=4BEEB5189A99215AC9CAFAB945412119 HTTP/1.1" 200 23710

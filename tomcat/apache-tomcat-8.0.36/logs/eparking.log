@@ -14411,3 +14411,5 @@ java.lang.NumberFormatException: For input string: "9999999999"
     </Error>
 </ns3:startParkingResponse>
 
+2017-02-06 21:43:26,334 INFO  org.apache.catalina.core.ContainerBase.[Catalina].[localhost].[/manager]- HTMLManager: list: Listing contexts for virtual host 'localhost'
+2017-02-06 21:43:26,334 INFO  org.apache.catalina.core.ContainerBase.[Catalina].[localhost].[/manager]- HTMLManager: list: Listing contexts for virtual host 'localhost'
